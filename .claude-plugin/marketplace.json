@@ -1,0 +1,33 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.schema.json",
+  "name": "agentic-canvas-marketplace",
+  "metadata": {
+    "description": "Marketplace for the Agent Canvas plugin — local-first visual planning canvas for human-agent workflow design."
+  },
+  "owner": {
+    "name": "Mustafa Akben",
+    "email": "makben@elon.edu"
+  },
+  "plugins": [
+    {
+      "source": "./",
+      "name": "agent-canvas",
+      "description": "Local-first visual planning canvas for human-agent workflow design, execution, and evidence-backed progress tracking.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Mustafa Akben"
+      },
+      "homepage": "https://github.com/mustafaakben/agentic-canvas-claude",
+      "repository": "https://github.com/mustafaakben/agentic-canvas-claude",
+      "keywords": [
+        "workflow",
+        "canvas",
+        "planning",
+        "multi-agent",
+        "visual",
+        "local-first",
+        "agentic"
+      ]
+    }
+  ]
+}

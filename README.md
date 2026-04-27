@@ -6,11 +6,19 @@ No build step. No framework. No install required. Just open it in a browser and 
 
 ## Install
 
+**Step 1 — Add the marketplace:**
+
 ```bash
-claude plugin add mustafaakben/agentic-canvas-claude
+claude plugin marketplace add mustafaakben/agentic-canvas-claude
 ```
 
-Or load locally during development:
+**Step 2 — Install the plugin:**
+
+```bash
+claude plugin install agent-canvas@agentic-canvas-marketplace
+```
+
+**Or load locally during development:**
 
 ```bash
 claude --plugin-dir ./path-to-this-folder
