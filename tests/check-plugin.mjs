@@ -82,7 +82,6 @@ const forbidden = [
   "archive",
   "experiments",
   "node_modules",
-  ".git",
 ];
 
 for (const entry of forbidden) {

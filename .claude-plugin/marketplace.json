@@ -1,5 +1,4 @@
 {
-  "$schema": "https://code.claude.com/schemas/marketplace.schema.json",
   "name": "agentic-canvas-marketplace",
   "metadata": {
     "description": "Marketplace for the Agent Canvas plugin — local-first visual planning canvas for human-agent workflow design."
