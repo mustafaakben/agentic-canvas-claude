@@ -1,0 +1,310 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-canvas.local/schemas/agent-canvas.schema.json",
+  "title": "Agent Canvas Workflow",
+  "type": "object",
+  "required": ["schemaVersion", "workflowKind", "name", "nodes", "connections"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "enum": ["0.4"]
+    },
+    "workflowKind": {
+      "type": "string",
+      "const": "agentic-coding-sketch"
+    },
+    "name": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "designIntent": {
+      "type": "string"
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/connection"
+      }
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "type", "label", "purposeInstructions", "x", "y"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["generic", "human", "start", "end", "branch", "merge", "loop", "parallel", "trycatch", "wait", "subflow"]
+        },
+        "label": {
+          "type": "string"
+        },
+        "purposeInstructions": {
+          "type": "string"
+        },
+        "agent": {
+          "$ref": "#/$defs/agent"
+        },
+        "progress": {
+          "$ref": "#/$defs/progress"
+        },
+        "inputs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outputs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ports": {
+          "type": "object",
+          "properties": {
+            "inputs": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "outputs": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "loop": {
+          "$ref": "#/$defs/loop"
+        },
+        "loopDefinition": {
+          "type": "string"
+        },
+        "exitMode": {
+          "type": "string",
+          "enum": ["any", "all"]
+        },
+        "exitConditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "agent": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "intent": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendedTools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "progress": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["not_started", "planned", "in_progress", "blocked", "needs_review", "review_pending", "completed", "rejected", "superseded", "error"]
+        },
+        "owner": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/claim"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "claim": {
+      "type": "object",
+      "required": ["id", "status", "summary", "evidence", "review"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "claimedBy": {
+          "type": "string"
+        },
+        "claimedAt": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "review": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["pending", "approved", "rejected"]
+            },
+            "reviewer": {
+              "type": "string"
+            },
+            "reviewedAt": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["command", "file", "diff", "screenshot", "test", "url", "human_note"]
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "result": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "loop": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string"
+        },
+        "intent": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "exitRule": {
+          "type": "string"
+        },
+        "agentNotes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "connection": {
+      "type": "object",
+      "required": ["from", "fromPort", "to", "toPort"],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "fromPort": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fromRole": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "toPort": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "toRole": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

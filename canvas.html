@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Node Canvas &mdash; Brainstorming</title>
+
+<!-- Local browser runtime dependencies -->
+<link rel="stylesheet" href="./vendor/drawflow.min.css" />
+<script src="./vendor/drawflow.min.js"></script>
+<script src="./vendor/html2canvas.min.js"></script>
+<script src="./vendor/dagre.min.js"></script>
+<script src="./vendor/elk.bundled.js"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="./styles/canvas.css" />
+</head>
+
+<body>
+
+<!-- Canvas (full screen) -->
+<div id="drawflow"></div>
+
+<!-- Empty state hint -->
+<div class="empty-state" id="empty-state">
+  <div class="empty-state-line">
+    drag a node from the ribbon
+    <span class="arrow">&darr;</span>
+    &nbsp;&middot;&nbsp; double-click to rename
+    &nbsp;&middot;&nbsp; drag from a <strong>filled</strong> dot to a <strong>hollow</strong> dot to connect
+    &nbsp;&middot;&nbsp; Loop: <strong>body</strong> repeats, <strong>again</strong> returns, <strong>done</strong> exits
+  </div>
+</div>
+
+<!-- Corner attribution -->
+<div class="corner-mark">
+  <div class="mark" aria-hidden="true">N</div>
+  <div class="corner-title" aria-label="Canvas title">
+    <button class="corner-title-field" type="button" data-title-field="app" title="Double-click to rename">Node Canvas</button>
+    <span class="corner-title-separator">/</span>
+    <button class="corner-title-field" type="button" data-title-field="workflow" title="Double-click to rename">Brainstorm</button>
+  </div>
+</div>
+
+<!-- Workspace persistence status -->
+<div class="persistence-status" id="persistence-status" aria-live="polite">
+  <span class="status-dot" id="persistence-dot"></span>
+  <span id="persistence-label">Local file export</span>
+  <span id="persistence-path"></span>
+</div>
+
+<!-- Zoom controls -->
+<div class="zoom-cluster">
+  <button id="zoom-in" title="Zoom in (Ctrl + scroll)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+  </button>
+  <button id="zoom-reset" title="Reset zoom">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 4 3 12 11 12"/></svg>
+  </button>
+  <button id="zoom-out" title="Zoom out">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+  </button>
+</div>
+
+<!-- Ribbon -->
+<div class="ribbon-shell">
+  <div class="ribbon" id="ribbon">
+    <input type="file" id="file-input" accept=".json,application/json" />
+  </div>
+</div>
+
+<!-- Node inspector -->
+<aside class="inspector" id="node-inspector" aria-hidden="true">
+  <div class="inspector-head">
+    <div>
+      <div class="inspector-kind" id="inspector-kind">node</div>
+      <h2 class="inspector-title">Node</h2>
+    </div>
+    <button class="inspector-close" id="inspector-close" type="button" title="Close">x</button>
+  </div>
+  <div class="inspector-body">
+    <label class="field">
+      <span>Name</span>
+      <input id="node-name-input" type="text" autocomplete="off" />
+    </label>
+    <label class="field">
+      <span>Purpose / Instructions</span>
+      <textarea id="node-purpose-instructions-input"></textarea>
+    </label>
+    <label class="field">
+      <span>Progress status</span>
+      <select id="node-progress-status-input">
+        <option value="not_started">Not started</option>
+        <option value="planned">Planned</option>
+        <option value="in_progress">In progress</option>
+        <option value="needs_review">Needs review</option>
+        <option value="review_pending">Review pending</option>
+        <option value="completed">Completed</option>
+        <option value="rejected">Rejected</option>
+        <option value="superseded">Superseded</option>
+        <option value="blocked">Blocked</option>
+        <option value="error">Error</option>
+      </select>
+    </label>
+    <div class="agent-editor" id="agent-editor-section">
+      <div class="loop-editor-title">Agent Metadata</div>
+      <label class="field">
+        <span>Role</span>
+        <input id="node-agent-role-input" type="text" autocomplete="off" />
+      </label>
+      <label class="field">
+        <span>Intent</span>
+        <textarea id="node-agent-intent-input"></textarea>
+      </label>
+      <label class="field">
+        <span>Inputs</span>
+        <textarea id="node-agent-inputs-input"></textarea>
+      </label>
+      <label class="field">
+        <span>Outputs</span>
+        <textarea id="node-agent-outputs-input"></textarea>
+      </label>
+      <label class="field">
+        <span>Acceptance criteria</span>
+        <textarea id="node-agent-acceptance-input"></textarea>
+      </label>
+      <label class="field">
+        <span>Recommended tools</span>
+        <textarea id="node-agent-tools-input"></textarea>
+      </label>
+      <label class="field">
+        <span>Risk level</span>
+        <select id="node-agent-risk-input">
+          <option value="">Unspecified</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Agent notes</span>
+        <textarea id="node-agent-notes-input"></textarea>
+      </label>
+    </div>
+    <div class="claims-editor" id="claims-editor-section">
+      <div class="claims-editor-head">
+        <div class="loop-editor-title">Claims &amp; Evidence</div>
+        <button class="claim-add" id="add-progress-claim" type="button">Add</button>
+      </div>
+      <div id="progress-claim-list"></div>
+    </div>
+    <div class="port-row">
+      <div>
+        <span class="port-label">Inputs</span>
+        <span class="port-count" id="node-input-count">0</span>
+      </div>
+      <div class="port-stepper">
+        <button id="remove-input-port" type="button" title="Remove input">-</button>
+        <button id="add-input-port" type="button" title="Add input">+</button>
+      </div>
+    </div>
+    <div class="port-row">
+      <div>
+        <span class="port-label">Outputs</span>
+        <span class="port-count" id="node-output-count">0</span>
+      </div>
+      <div class="port-stepper">
+        <button id="remove-output-port" type="button" title="Remove output">-</button>
+        <button id="add-output-port" type="button" title="Add output">+</button>
+      </div>
+    </div>
+    <div class="port-fixed-hint" id="loop-port-hint" hidden>
+      Fixed loop ports: in enters, body starts one cycle, again receives the cycle end, done exits.
+    </div>
+    <div class="loop-editor" id="loop-editor-section" hidden>
+      <div class="loop-editor-title">Loop Intent</div>
+      <label class="field">
+        <span>Loop type</span>
+        <select id="loop-mode-input">
+          <option value="custom">Custom</option>
+          <option value="foreach">Foreach</option>
+          <option value="while">While</option>
+          <option value="until">Until</option>
+          <option value="approval">Approval</option>
+          <option value="retry">Retry</option>
+          <option value="externalGate">External gate</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Intent</span>
+        <textarea id="loop-definition-input"></textarea>
+      </label>
+      <label class="field">
+        <span>Repeated body meaning</span>
+        <textarea id="loop-body-input"></textarea>
+      </label>
+      <label class="field">
+        <span>Exit rule</span>
+        <textarea id="loop-exit-rule-input"></textarea>
+      </label>
+      <div class="loop-editor-title">Exit Conditions</div>
+      <div class="loop-mode-row">
+        <label class="field">
+          <span>Exit when</span>
+          <select id="loop-stop-mode-input">
+            <option value="any">Any condition is met</option>
+            <option value="all">All conditions are met</option>
+          </select>
+        </label>
+        <button class="loop-condition-add" id="add-loop-stop-condition" type="button">Add</button>
+      </div>
+      <div id="loop-stop-condition-list"></div>
+      <label class="field">
+        <span>Agent notes</span>
+        <textarea id="loop-agent-notes-input"></textarea>
+      </label>
+    </div>
+  </div>
+</aside>
+
+<!-- Toast -->
+<div class="toast" id="toast">ready</div>
+
+<!-- Marquee -->
+<div id="selection-marquee" class="selection-marquee"></div>
+
+<script type="module" src="./src/canvas/main.js"></script>
+
+</body>
+</html>

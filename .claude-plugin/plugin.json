@@ -1,0 +1,22 @@
+{
+  "name": "agent-canvas",
+  "description": "Local-first visual planning canvas for human-agent workflow design, execution, and evidence-backed progress tracking.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Mustafa Akben",
+    "email": "makben@elon.edu",
+    "url": "https://www.mustafaakben.com"
+  },
+  "homepage": "https://github.com/mustafaakben/agentic-canvas-claude",
+  "repository": "https://github.com/mustafaakben/agentic-canvas-claude",
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "canvas",
+    "planning",
+    "multi-agent",
+    "visual",
+    "local-first",
+    "agentic"
+  ]
+}
