@@ -1,6 +1,7 @@
 ---
 description: Use when the user asks to use Agent Canvas, plan visually, design a multi-agent workflow, decompose complex work, map dependencies, or create a workflow JSON plan before implementation.
 argument-hint: "[goal or workflow path]"
+user-invocable: true
 ---
 
 # Plan With Agent Canvas
