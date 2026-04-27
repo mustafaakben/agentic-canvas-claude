@@ -28,10 +28,10 @@ After installation, the following skills appear automatically:
 
 | Skill | Purpose |
 |---|---|
-| `agent-canvas:plan-with-canvas` | Turn a complex request into a visual workflow plan |
-| `agent-canvas:execute-canvas-plan` | Follow a saved workflow JSON as the execution contract |
-| `agent-canvas:review-canvas-evidence` | Adversarial review of claims, evidence, and gates |
-| `agent-canvas:repair-canvas-workflow` | Fix malformed or outdated workflow JSON |
+| `agent-canvas:plan` | Turn a complex request into a visual workflow plan |
+| `agent-canvas:execute` | Follow a saved workflow JSON as the execution contract |
+| `agent-canvas:review` | Adversarial review of claims, evidence, and gates |
+| `agent-canvas:repair` | Fix malformed or outdated workflow JSON |
 
 ## What It Does
 
@@ -93,10 +93,10 @@ You: Review claims, approve or reject, agent continues from the approved state.
 .claude-plugin/
   plugin.json              # Plugin manifest
 skills/
-  plan-with-canvas/        # Planning skill
-  execute-canvas-plan/     # Execution skill
-  review-canvas-evidence/  # Review skill
-  repair-canvas-workflow/  # Repair skill
+  plan/                    # Planning skill
+  execute/                 # Execution skill
+  review/                  # Review skill
+  repair/                  # Repair skill
 bin/
   agent-canvas             # POSIX CLI wrapper
   agent-canvas.cmd         # Windows CLI wrapper

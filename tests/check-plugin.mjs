@@ -61,10 +61,10 @@ assert(canvasHtml.includes("./styles/canvas.css"), "canvas.html must load plugin
 assert(canvasHtml.includes("./src/canvas/main.js"), "canvas.html must load plugin-local JS");
 
 const skillNames = [
-  "plan-with-canvas",
-  "execute-canvas-plan",
-  "review-canvas-evidence",
-  "repair-canvas-workflow",
+  "plan",
+  "execute",
+  "review",
+  "repair",
 ];
 
 for (const skillName of skillNames) {
