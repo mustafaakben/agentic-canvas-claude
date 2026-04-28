@@ -1,0 +1,208 @@
+{
+  "name": "Drafty Landing Page — Multi-Start Cross-Functional Workflow",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Landing page for Drafty — an AI writing assistant for short-form content (emails, social posts, brief docs).",
+    "phases": [
+      "P1 Parallel craft — UI / Content / Code in three role-owned chains",
+      "P2 Integration — assemble and holistic review",
+      "P3 Sign-off — human approval before ship"
+    ],
+    "patternNote": "Multi-start with terminal merge for cross-functional integration. This is a third multi-start variant beyond §4.7 (independence/cadence, no merge) and §4.8 (ideational divergence, no merge). Here the three starts are role-owned briefs (designer / copywriter / engineer) that genuinely run in parallel but must reconcile into ONE integrated deliverable — so they converge at merge_assemble. A future orchestrator should dispatch each start to its own role-agent and let merge_assemble fan-in wait until all three arms complete.",
+    "ideationStarts": [
+      {
+        "starts": ["start_ui", "start_content", "start_code"],
+        "sharedQuestion": "Build a high-converting Drafty landing page in one cycle.",
+        "framings": {
+          "start_ui": "visual designer — direction, hierarchy, components, motion",
+          "start_content": "copywriter — voice, message, conversion-focused copy",
+          "start_code": "front-end engineer — semantic build, accessibility, performance"
+        },
+        "comparison": "merge_assemble reconciles structurally; final_review judges holistically; wait_signoff is the human gate."
+      }
+    ],
+    "humanInTheLoop": ["wait_signoff"],
+    "totalNodes": 19,
+    "totalConnections": 18
+  },
+  "nodes": [
+    {
+      "id": "start_ui",
+      "type": "start",
+      "label": "Start: UI Design",
+      "x": 120,
+      "y": 320,
+      "purposeInstructions": "UI Design Lead. Kick off the visual track for the Drafty landing page.\n\nOutput a one-paragraph design brief covering:\n- Target reader (the same persona Content will write for).\n- Mood (e.g., 'modern, friendly, fast' — pick three adjectives).\n- 2–3 reference sites worth borrowing from (and what to borrow).\n- The single visual objective for this page (e.g., 'make the value prop unmissable above the fold').\n\nThis brief is the seed prompt for ui_research. Do not start picking colors or fonts here — that's downstream."
+    },
+    {
+      "id": "ui_research",
+      "type": "generic",
+      "label": "UI: Reference Scan",
+      "x": 300,
+      "y": 320,
+      "purposeInstructions": "Competitor and inspiration scan.\n\nSurvey ~5 landing pages from adjacent AI writing tools (Grammarly, Notion AI, Jasper, Sudowrite, Lex) and ~3 outside-category references with strong conversion-driven layouts.\n\nFor each: capture (a) the hero pattern, (b) the primary CTA placement and language, (c) one thing worth borrowing, (d) one thing to avoid.\n\nOutput a compact reference table feeding ui_explore. Do not propose directions yet — this is intake only."
+    },
+    {
+      "id": "ui_explore",
+      "type": "generic",
+      "label": "UI: Direction Exploration",
+      "x": 480,
+      "y": 320,
+      "purposeInstructions": "Direction exploration.\n\nFrom the brief and the reference scan, propose 3 distinct visual directions (e.g., 'editorial-clean', 'playful-illustrated', 'utility-dense'). Each direction = one paragraph + a moodboard description (typography family, color temperature, imagery style, density).\n\nClose with a recommended direction and a one-line rationale. Hand the recommendation to ui_mockup. Do not produce mockup-level detail here."
+    },
+    {
+      "id": "ui_mockup",
+      "type": "generic",
+      "label": "UI: Hi-Fi Mockup Spec",
+      "x": 660,
+      "y": 320,
+      "purposeInstructions": "High-fidelity mockup specification.\n\nProduce a single-page mockup spec for the recommended direction. Sections in order: hero (headline, subhead, CTA, visual), social-proof strip, three-feature grid, secondary CTA, footer.\n\nSpecify: type scale (display / h1 / h2 / body / caption), color palette (3–4 hex values + semantic names), spacing rhythm (4 or 8 px base), key components (button, card, nav).\n\nThe output must be detailed enough that a build agent can implement it without further design decisions."
+    },
+    {
+      "id": "ui_critique",
+      "type": "generic",
+      "label": "UI: Self-Critique",
+      "x": 840,
+      "y": 320,
+      "purposeInstructions": "Self-critique against UX heuristics.\n\nEvaluate the mockup spec against:\n(a) clarity of value prop above the fold,\n(b) CTA visibility and visual uniqueness,\n(c) accessibility (color contrast, focus states, reduced-motion intent),\n(d) mobile adaptation (does the section order survive a single column?).\n\nFor each: rate ok / concern / blocker, with a one-line note. Apply any required fixes before sign-off. Output the revised mockup spec — that is the artifact merge_assemble consumes."
+    },
+
+    {
+      "id": "start_content",
+      "type": "start",
+      "label": "Start: Content",
+      "x": 120,
+      "y": 500,
+      "purposeInstructions": "Content Lead. Kick off the messaging track for the Drafty landing page.\n\nOutput a one-paragraph content brief covering:\n- Target reader (must match the UI brief's persona — coordinate via the shared topic, not by reading the UI brief here).\n- The one job-to-be-done you're selling against (e.g., 'I keep rewriting the same email five times').\n- Tone of voice (e.g., 'warm, plainspoken, no jargon').\n- The conversion goal (free-trial signup; no credit card).\n\nThis brief is the seed for c_audience. Do not draft copy yet."
+    },
+    {
+      "id": "c_audience",
+      "type": "generic",
+      "label": "Content: Audience Research",
+      "x": 300,
+      "y": 500,
+      "purposeInstructions": "Audience and message-mining.\n\nIdentify 3 specific reader personas (e.g., small-business owner, graduate student, remote PM). For each: surface their actual language about the pain (voice-of-customer phrasings — quotes you'd find in a Reddit thread or support ticket, not marketer prose).\n\nOutput: a persona × pain × phrase grid. The draft will pull from this verbatim. Do not invent quotes; mark anything synthesized as 'representative phrasing'."
+    },
+    {
+      "id": "c_outline",
+      "type": "generic",
+      "label": "Content: Page Outline",
+      "x": 480,
+      "y": 500,
+      "purposeInstructions": "Page outline.\n\nDefine the section sequence and the goal of each section: hero (the promise), social proof (why trust), three core benefits (each with one anchored example), objection handler (privacy, cost, learning curve), final CTA.\n\nFor each section, mark which persona it primarily speaks to and which voice-of-customer phrase it leans on. Output an annotated outline. The hand-off to c_draft is this outline plus the audience grid."
+    },
+    {
+      "id": "c_draft",
+      "type": "generic",
+      "label": "Content: Copy Draft",
+      "x": 660,
+      "y": 500,
+      "purposeInstructions": "Copy draft.\n\nWrite the full page copy from the outline:\n- Hero headline (≤ 10 words) + subhead (≤ 25 words).\n- Three benefit blocks, each with a concrete before/after example ('Drafty turned this email: ___ into this: ___').\n- An FAQ-style objection block (3 Q&A pairs).\n- A final CTA with a verb-led button label.\n\nPull voice-of-customer phrasings from c_audience verbatim where natural. No filler, no superlatives without evidence."
+    },
+    {
+      "id": "c_polish",
+      "type": "generic",
+      "label": "Content: Editorial Pass",
+      "x": 840,
+      "y": 500,
+      "purposeInstructions": "Editorial pass.\n\nTighten every line. Cut anything that could be deleted without losing meaning. Verify:\n- Every claim has a concrete example or is removed.\n- Every CTA verb is action-clear ('Try Drafty free' beats 'Get started').\n- No marketer cliches ('revolutionize', 'unleash', 'next-gen', 'game-changer').\n- Reading level appropriate for the target persona (Hemingway grade ≤ 8 for the hero).\n\nOutput: the final copy block, sectioned to match the outline, ready for layout. This is what merge_assemble consumes."
+    },
+
+    {
+      "id": "start_code",
+      "type": "start",
+      "label": "Start: Code",
+      "x": 120,
+      "y": 680,
+      "purposeInstructions": "Engineering Lead. Kick off the build track for the Drafty landing page.\n\nOutput a one-paragraph technical brief covering:\n- Stack (default: HTML + Tailwind CSS, no SPA, no client-side framework).\n- Hosting expectation (static — Cloudflare Pages, Netlify, or similar).\n- Performance budget (LCP < 2 s on a 4G profile, CLS < 0.1, total page weight ≤ 500 KB).\n- Browser/device matrix (last 2 versions of Chrome / Safari / Firefox; iOS Safari + Android Chrome).\n\nThis brief is the seed for k_arch. Do not start writing HTML yet."
+    },
+    {
+      "id": "k_arch",
+      "type": "generic",
+      "label": "Code: Architecture",
+      "x": 300,
+      "y": 680,
+      "purposeInstructions": "Architecture and scaffold.\n\nDecide:\n- File structure (single index.html vs. component-split with build step).\n- CSS strategy (Tailwind utilities vs. handwritten CSS — pick one and justify).\n- Asset handling: images as WebP with JPG fallback; fonts subset to Latin + preloaded.\n- Where the CTA goes (does it need any client-side JS or is it a plain anchor link to /signup?).\n\nOutput: a scaffold spec a build agent can implement. No actual code yet."
+    },
+    {
+      "id": "k_impl",
+      "type": "generic",
+      "label": "Code: Implementation",
+      "x": 480,
+      "y": 680,
+      "purposeInstructions": "Implementation.\n\nBuild the static page from the latest mockup spec (from ui_critique) and copy block (from c_polish). Constraints:\n- Semantic HTML: proper heading hierarchy, <nav>, <main>, <footer> landmarks.\n- Mobile-first CSS — single-column baseline, breakpoints additive.\n- Lazy-load below-the-fold images (loading=\"lazy\").\n- No client-side JS unless the CTA truly needs it (it shouldn't).\n\nOutput: the actual HTML/CSS files (or a single page) plus a deploy-ready folder structure. Note any places where the spec was ambiguous and you made a call."
+    },
+    {
+      "id": "k_a11y",
+      "type": "generic",
+      "label": "Code: Accessibility Audit",
+      "x": 660,
+      "y": 680,
+      "purposeInstructions": "Accessibility audit (WCAG 2.1 AA).\n\nCheck:\n- Color contrast on all text (4.5:1 normal, 3:1 large).\n- Keyboard navigation reaches every interactive element in a sensible order.\n- Visible focus state on every focusable element (do not rely on browser default).\n- Alt text on every meaningful image; empty alt on decorative.\n- prefers-reduced-motion respected on any animation/transition longer than 200 ms.\n- Form/CTA labels associated correctly (if any form is present).\n\nOutput: pass / fix-list, with specific selectors for any failures."
+    },
+    {
+      "id": "k_perf",
+      "type": "generic",
+      "label": "Code: Performance Audit",
+      "x": 840,
+      "y": 680,
+      "purposeInstructions": "Performance audit against the budget.\n\nVerify:\n- Hero image weight ≤ 120 KB (WebP + responsive sizes).\n- Critical CSS inlined; non-critical deferred.\n- Fonts subset and preloaded; no FOIT longer than 200 ms.\n- No render-blocking JS in the head.\n- Predicted Lighthouse: Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 90, SEO ≥ 90.\n\nOutput: predicted scores per category + any fix list. This is the artifact merge_assemble consumes from the code branch."
+    },
+
+    {
+      "id": "merge_assemble",
+      "type": "merge",
+      "label": "Merge: Integrate",
+      "x": 1080,
+      "y": 500,
+      "purposeInstructions": "Integration.\n\nReceive three inputs: (1) the UI mockup spec post-critique, (2) the polished copy block, (3) the a11y- and perf-audited build.\n\nVerify mutual consistency:\n- Every section in the content outline has a matching layout slot in the mockup AND a matching block in the built HTML.\n- The implemented styling matches the chosen visual direction (don't accept 'editorial-clean' brief but 'playful-illustrated' build).\n- The copy length fits the layout — no overflow, no awkward orphans.\n- The audited a11y and perf claims still hold after integration (re-check anything content changes touched).\n\nSurface any mismatch as a structured delta list ('UI spec says X, build does Y, copy expects Z'). Output: the integrated landing-page candidate plus the delta list (which can be empty)."
+    },
+    {
+      "id": "final_review",
+      "type": "generic",
+      "label": "Holistic Review",
+      "x": 1260,
+      "y": 500,
+      "purposeInstructions": "Holistic review — judge the assembled page as a first-time visitor would in 5 seconds.\n\nQuestions:\n- Is the value prop instantly clear above the fold (no scrolling required)?\n- Does the primary CTA feel like the obvious next step (visually distinct, verb-led, low-friction)?\n- Would you trust this brand? (visual polish, social proof, no broken English, no obvious AI-generated tells)\n- Has any branch drifted from its original brief? (re-read start_ui / start_content / start_code briefs and check for drift)\n\nOutput: either a green-light note (ready for sign-off) OR a structured revision request listing which branch must rework what. If revisions are required, the user routes them back manually outside this workflow."
+    },
+    {
+      "id": "wait_signoff",
+      "type": "wait",
+      "label": "Wait: the user Sign-off",
+      "x": 1440,
+      "y": 500,
+      "purposeInstructions": "The user's sign-off on the landing page.\n\nThe agent stops here until the user explicitly: (a) approves and proceeds to end, (b) requests revisions (route back to the offending branch outside this workflow), or (c) kills the page (route to a separate end_killed if added later).\n\nLog the sign-off decision and rationale before continuing."
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "label": "End: Ship",
+      "x": 1620,
+      "y": 500,
+      "purposeInstructions": "Landing page approved and ready for deploy. Hand off to whatever deployment automation exists outside this workflow (Cloudflare Pages push, Netlify deploy hook, etc.)."
+    }
+  ],
+  "connections": [
+    { "from": "start_ui",      "fromPort": 1, "to": "ui_research",   "toPort": 1 },
+    { "from": "ui_research",   "fromPort": 1, "to": "ui_explore",    "toPort": 1 },
+    { "from": "ui_explore",    "fromPort": 1, "to": "ui_mockup",     "toPort": 1 },
+    { "from": "ui_mockup",     "fromPort": 1, "to": "ui_critique",   "toPort": 1 },
+    { "from": "ui_critique",   "fromPort": 1, "to": "merge_assemble","toPort": 1 },
+
+    { "from": "start_content", "fromPort": 1, "to": "c_audience",    "toPort": 1 },
+    { "from": "c_audience",    "fromPort": 1, "to": "c_outline",     "toPort": 1 },
+    { "from": "c_outline",     "fromPort": 1, "to": "c_draft",       "toPort": 1 },
+    { "from": "c_draft",       "fromPort": 1, "to": "c_polish",      "toPort": 1 },
+    { "from": "c_polish",      "fromPort": 1, "to": "merge_assemble","toPort": 2 },
+
+    { "from": "start_code",    "fromPort": 1, "to": "k_arch",        "toPort": 1 },
+    { "from": "k_arch",        "fromPort": 1, "to": "k_impl",        "toPort": 1 },
+    { "from": "k_impl",        "fromPort": 1, "to": "k_a11y",        "toPort": 1 },
+    { "from": "k_a11y",        "fromPort": 1, "to": "k_perf",        "toPort": 1 },
+    { "from": "k_perf",        "fromPort": 1, "to": "merge_assemble","toPort": 3 },
+
+    { "from": "merge_assemble","fromPort": 1, "to": "final_review",  "toPort": 1 },
+    { "from": "final_review",  "fromPort": 1, "to": "wait_signoff",  "toPort": 1 },
+    { "from": "wait_signoff",  "fromPort": 1, "to": "end",            "toPort": 1 }
+  ]
+}

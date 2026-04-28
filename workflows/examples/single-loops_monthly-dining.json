@@ -1,0 +1,236 @@
+{
+  "name": "Monthly Dining & Meal Plan — Family of Four",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "One-month dining/meal plan for a family of four: weekday home cooking, school/work lunches, weekend dining-out, one special-occasion dinner, and grocery cadence — split across two parents who own different lanes.",
+    "phases": [
+      "P0 Framing & Budget",
+      "P1 Calendar & Track Dispatch",
+      "P2a Weeknight Cooking Track (Parent A)",
+      "P2b Weekend & Special-Occasion Track (Parent B)",
+      "P2c Grocery & Pantry Track (shared)",
+      "P3 Mid-Month Sync",
+      "P4 End-of-Month Review"
+    ],
+    "independentBranchPoints": [
+      {
+        "after": "p1_dispatch",
+        "branches": ["p2a_weeknight_plan", "p2b_weekend_plan", "p2c_grocery_plan"],
+        "note": "Three role-owned tracks run in parallel for the whole month. Parent A owns weeknight prep + lunches; Parent B owns weekend dining-out + special-occasion dinner; the grocery/pantry cadence is shared but mostly executed by whoever shops. They reconverge only at the mid-month sync and the end-of-month review."
+      }
+    ],
+    "iterativeLoops": [
+      { "node": "p2a_weeknight_loop", "iteratesOver": "each weekday of the month (~20 weeknights)", "exitWhen": "all weeknights of the month have a cooked meal + lunches packed, OR month ends" },
+      { "node": "p2b_weekend_loop", "iteratesOver": "each weekend of the month (~4 weekends)", "exitWhen": "every weekend has a confirmed dining/outing plan and the special-occasion dinner is booked + executed" },
+      { "node": "p2c_grocery_loop", "iteratesOver": "weekly grocery + pantry restock cycles (~4 cycles)", "exitWhen": "month ends or pantry staples list is fully maintained for the month" }
+    ],
+    "humanInTheLoop": [
+      "p0_budget_signoff",
+      "p2b_special_occasion_confirm",
+      "p3_midmonth_sync"
+    ],
+    "totalNodes": 19,
+    "totalConnections": 21
+  },
+  "nodes": [
+    {
+      "id": "p0_start",
+      "type": "start",
+      "label": "Kickoff",
+      "x": 100,
+      "y": 500,
+      "purposeInstructions": "Entry point. Triggered on the last weekend of the prior month. The two parents sit down together for ~30 minutes to start the month's dining plan."
+    },
+    {
+      "id": "p0_framing",
+      "type": "generic",
+      "label": "Frame the Month",
+      "x": 280,
+      "y": 500,
+      "purposeInstructions": "Framing Agent. Gather the month's known constraints and shape the plan envelope.\n\nInputs: family calendar (school events, sports, travel days, work trips, guests), known birthdays/anniversaries, prior-month grocery spend, kids' current food preferences and any dietary changes.\n\nOutputs: a one-page brief listing (a) eating-at-home count vs eating-out count target, (b) which date is the special occasion and what kind (birthday, anniversary, milestone), (c) any travel weeks where the cooking cadence pauses, (d) cuisine themes the family wants to try this month (e.g., 'one taco night per week', 'two new recipes total').\n\nDo NOT decide individual meals here — that's the track agents' job."
+    },
+    {
+      "id": "p0_budget",
+      "type": "generic",
+      "label": "Set Budget",
+      "x": 460,
+      "y": 500,
+      "purposeInstructions": "Budget Agent. Translate the framing brief into hard numbers.\n\nProduce three line items: (1) groceries + pantry staples ceiling, (2) weekend dining-out + casual outings ceiling, (3) special-occasion dinner ceiling (often a separate, larger envelope). Compare to last month's actuals; flag any line that's >15% over prior month and require explicit acknowledgment.\n\nOutput: a budget table with per-week and monthly totals, plus a 10% contingency line for last-minute orders or replacements."
+    },
+    {
+      "id": "p0_budget_signoff",
+      "type": "wait",
+      "label": "Both parents OK budget",
+      "x": 640,
+      "y": 500,
+      "purposeInstructions": "Human gate. Both parents review the framing brief + budget table together and sign off before any track starts spending. This is the single biggest preventable source of mid-month conflict, so do not skip it.\n\nRelease condition: both parents verbally agree on the totals and on who owns which lane this month. If they don't agree, loop back to p0_budget for another pass — do not proceed with a contested budget."
+    },
+    {
+      "id": "p1_dispatch",
+      "type": "parallel",
+      "label": "Dispatch tracks",
+      "x": 820,
+      "y": 500,
+      "purposeInstructions": "Parallel fan-out. Splits the month's execution into three independent tracks that run concurrently for the whole month:\n\n  out_1 -> Weeknight Cooking Track (Parent A)\n  out_2 -> Weekend & Special-Occasion Track (Parent B)\n  out_3 -> Grocery & Pantry Track (shared)\n\nEach track has its own iteration cadence and its own deliverables. They only reconverge at the mid-month sync (wait gate) and the end-of-month review (merge)."
+    },
+    {
+      "id": "p2a_weeknight_plan",
+      "type": "generic",
+      "label": "Plan weeknights",
+      "x": 1020,
+      "y": 320,
+      "purposeInstructions": "Weeknight Planning Agent (Parent A). Build the weeknight skeleton for the month.\n\nFor each of the ~20 weeknights, propose a meal slot: quick (≤30 min weeknight standby), medium (45 min), or 'leftover/redux' night. Aim for: 2 quick + 2 medium + 1 leftover per typical week. Flag any night where after-school activities collapse the prep window — those must be quick or pre-prepped on the prior weekend.\n\nAlso plan school + work lunches in parallel: cluster lunch components so one prep session covers 2-3 lunches. Do not produce a rigid day-by-day menu — keep it as a meal POOL the loop draws from."
+    },
+    {
+      "id": "p2a_weeknight_loop",
+      "type": "loop",
+      "label": "Weeknight loop",
+      "x": 1220,
+      "y": 320,
+      "purposeInstructions": "Weeknight Execution Loop (Parent A). For each weekday of the month, pull a meal from the pool, prep + cook dinner, and pack lunches for the next day.\n\nDaily checklist: (1) confirm tonight's pick by morning so any thawing/marinating happens, (2) cook + serve, (3) pack tomorrow's lunches before kitchen cleanup ends, (4) note any item that ran out so the grocery track sees it for the next restock.\n\nIf a night fails (late meeting, sick kid, ingredient missing), substitute from the leftover/redux slot or fall back to the family takeout-default — do not stress the swap, just log it.",
+      "loopDefinition": "Iterate over each weekday of the month (~20 weeknights). Each iteration: pick a meal from the weeknight pool, cook dinner, pack next-day lunches.",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "Every weekday of the month has been executed (cooked or substituted)" },
+        { "text": "Month ends" }
+      ]
+    },
+    {
+      "id": "p2b_weekend_plan",
+      "type": "generic",
+      "label": "Plan weekends",
+      "x": 1020,
+      "y": 500,
+      "purposeInstructions": "Weekend Planning Agent (Parent B). Map out the month's ~4 weekends.\n\nFor each weekend decide: (a) one dining-out meal (Saturday dinner or Sunday brunch are typical), (b) one casual at-home weekend meal where the family cooks together, (c) any kid-driven outing (sports, friends' birthdays) that displaces a meal slot. Note restaurants the family hasn't tried this quarter and rotate at least one new spot in.\n\nDo NOT plan the special-occasion dinner here — that has its own dedicated agent because it needs reservations, dress code, and a gift/cake."
+    },
+    {
+      "id": "p2b_weekend_loop",
+      "type": "loop",
+      "label": "Weekend loop",
+      "x": 1220,
+      "y": 500,
+      "purposeInstructions": "Weekend Execution Loop (Parent B). For each weekend, confirm or adjust the dining-out plan ~3 days ahead, make the reservation if needed, and execute the outing.\n\nEach iteration: (1) Wednesday evening — re-check the weekend plan against weather, kid moods, school events; (2) Thursday — make/confirm reservation or grocery the at-home weekend meal; (3) execute Saturday/Sunday; (4) jot a one-line note on whether the spot is worth a repeat.",
+      "loopDefinition": "Iterate over each weekend of the month (~4). Each iteration: confirm plan, reserve, execute, debrief one line.",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "All weekends of the month have an executed (or intentionally skipped) plan" },
+        { "text": "Month ends" }
+      ]
+    },
+    {
+      "id": "p2b_special_plan",
+      "type": "generic",
+      "label": "Plan special dinner",
+      "x": 1020,
+      "y": 660,
+      "purposeInstructions": "Special-Occasion Planning Agent (Parent B). Plan the one special dinner of the month (e.g., birthday, anniversary).\n\nDecide: venue type (restaurant vs home dinner with guests), guest list (just the four, or extended family), dress/vibe, gift logistics, cake or dessert source, who handles transportation and childcare overlap (if it's an adults-only anniversary). If it's a restaurant, target booking 2+ weeks ahead — popular spots fill up.\n\nProduce a single mini-runbook: date, venue, time, reservation confirmation #, gift status, cake status, outfit notes for the kids."
+    },
+    {
+      "id": "p2b_special_occasion_confirm",
+      "type": "wait",
+      "label": "Confirm special dinner",
+      "x": 1220,
+      "y": 660,
+      "purposeInstructions": "Human gate. Parent A reviews and signs off on Parent B's special-occasion runbook at least 10 days before the date. This catches conflicts (e.g., Parent A had a work commitment that night, gift idea is wrong, restaurant violates a kid's allergy).\n\nRelease condition: Parent A explicitly confirms date, venue, gift, and any childcare logistics. If anything is wrong, route back to p2b_special_plan to adjust before reservations harden."
+    },
+    {
+      "id": "p2b_special_execute",
+      "type": "generic",
+      "label": "Execute special dinner",
+      "x": 1420,
+      "y": 660,
+      "purposeInstructions": "Special-Occasion Execution Agent. On the day: cake/gift ready, reservation re-confirmed that morning, outfits laid out, camera/phone charged, restaurant address shared with both parents. Capture 1-2 photos to use in the end-of-month review (and for the family's annual recap)."
+    },
+    {
+      "id": "p2c_grocery_plan",
+      "type": "generic",
+      "label": "Plan grocery cadence",
+      "x": 1020,
+      "y": 840,
+      "purposeInstructions": "Grocery Planning Agent. Establish the month's grocery rhythm.\n\nDecide: (a) the weekly big-shop day (e.g., Sunday morning), (b) the mid-week top-up day (typically Wednesday or Thursday for produce + dairy), (c) which staples auto-ship vs in-store (rice, oils, paper goods, kids' snacks), (d) the freezer-stock baseline (e.g., always 2 proteins thawed-ready). Cross-reference with the weeknight meal pool from p2a_weeknight_plan to ensure ingredient coverage.\n\nOutput: a one-page grocery cadence sheet plus a running pantry-staples list."
+    },
+    {
+      "id": "p2c_grocery_loop",
+      "type": "loop",
+      "label": "Weekly grocery loop",
+      "x": 1220,
+      "y": 840,
+      "purposeInstructions": "Grocery Weekly Loop. For each week of the month, run the big-shop + the mid-week top-up. Pull running needs from the weeknight loop's 'ran out' notes and from the weekend plan's at-home meal needs.\n\nEach iteration: (1) build the shopping list Saturday night from the next-week meal pool, (2) Sunday big-shop, (3) Wednesday top-up, (4) auto-ship status check, (5) update the pantry-staples list. Track receipts toward the grocery budget line — flag if the week is on pace to exceed the per-week ceiling.",
+      "loopDefinition": "Iterate over each week of the month (~4 cycles). Each iteration: list build -> big shop -> mid-week top-up -> staples list refresh -> spend check.",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "All weeks of the month have completed a big-shop + top-up cycle" },
+        { "text": "Month ends" }
+      ]
+    },
+    {
+      "id": "p3_midmonth_sync",
+      "type": "wait",
+      "label": "Mid-month sync",
+      "x": 1620,
+      "y": 500,
+      "purposeInstructions": "Human gate. Around day 14-16, both parents take 15 minutes to compare notes across the three tracks.\n\nReview: (a) is the grocery line tracking under budget? (b) which weeknight meals flopped — drop them from the pool? (c) is the special-occasion runbook locked and confirmed? (d) any school/work calendar surprises in the back half of the month? (e) any travel or sick days coming?\n\nRelease condition: both parents agree on any plan adjustments and acknowledge the budget status. If a track is badly off, decide whether to course-correct or accept the overage."
+    },
+    {
+      "id": "p4_review_merge",
+      "type": "merge",
+      "label": "Converge tracks",
+      "x": 1820,
+      "y": 500,
+      "purposeInstructions": "Fan-in. Waits for all three tracks to finish their loops and the special-occasion sub-flow to complete. Once all month-ending signals are in, hands off to the end-of-month review.\n\nInputs (in port order): (1) weeknight loop done, (2) weekend loop done, (3) grocery loop done, (4) special-occasion executed."
+    },
+    {
+      "id": "p4_review",
+      "type": "generic",
+      "label": "End-of-month review",
+      "x": 2000,
+      "y": 500,
+      "purposeInstructions": "Review Agent. Both parents, ~30 minutes, last weekend of the month.\n\nProduce a short retrospective: (1) actuals vs budget on all three lines, (2) top 3 hits and top 3 misses on weeknight meals (these update the family's evergreen recipe rotation), (3) restaurant rating sheet from the weekend log, (4) special-occasion debrief — what to repeat, what to change, (5) pantry shortages we kept hitting (carry into next month's staples baseline), (6) one explicit decision: what changes for next month? Save the retrospective as input to the next month's framing agent — this is the loop that makes future months better."
+    },
+    {
+      "id": "p4_archive",
+      "type": "generic",
+      "label": "Archive & seed next month",
+      "x": 2180,
+      "y": 500,
+      "purposeInstructions": "Archive Agent. File the retrospective, recipe-pool updates, and restaurant ratings into the family planning doc/folder so next month's p0_framing starts from refreshed inputs rather than a blank page.\n\nOutput artifacts: updated weeknight recipe pool, updated weekend restaurant rotation, updated pantry staples baseline, updated budget priors. Send a one-paragraph summary to both parents."
+    },
+    {
+      "id": "p4_end",
+      "type": "end",
+      "label": "Month complete",
+      "x": 2360,
+      "y": 500,
+      "purposeInstructions": "Termination. The month's plan is fully executed and reviewed; the next month's framing inputs are seeded. No further action until the next monthly kickoff."
+    }
+  ],
+  "connections": [
+    { "from": "p0_start", "fromPort": 1, "to": "p0_framing", "toPort": 1 },
+    { "from": "p0_framing", "fromPort": 1, "to": "p0_budget", "toPort": 1 },
+    { "from": "p0_budget", "fromPort": 1, "to": "p0_budget_signoff", "toPort": 1 },
+    { "from": "p0_budget_signoff", "fromPort": 1, "to": "p1_dispatch", "toPort": 1 },
+
+    { "from": "p1_dispatch", "fromPort": 1, "to": "p2a_weeknight_plan", "toPort": 1 },
+    { "from": "p1_dispatch", "fromPort": 2, "to": "p2b_weekend_plan", "toPort": 1 },
+    { "from": "p1_dispatch", "fromPort": 3, "to": "p2c_grocery_plan", "toPort": 1 },
+    { "from": "p1_dispatch", "fromPort": 4, "to": "p2b_special_plan", "toPort": 1 },
+
+    { "from": "p2a_weeknight_plan", "fromPort": 1, "to": "p2a_weeknight_loop", "toPort": 1 },
+    { "from": "p2b_weekend_plan", "fromPort": 1, "to": "p2b_weekend_loop", "toPort": 1 },
+    { "from": "p2c_grocery_plan", "fromPort": 1, "to": "p2c_grocery_loop", "toPort": 1 },
+
+    { "from": "p2b_special_plan", "fromPort": 1, "to": "p2b_special_occasion_confirm", "toPort": 1 },
+    { "from": "p2b_special_occasion_confirm", "fromPort": 1, "to": "p2b_special_execute", "toPort": 1 },
+
+    { "from": "p2a_weeknight_loop", "fromPort": 2, "to": "p3_midmonth_sync", "toPort": 1 },
+    { "from": "p2b_weekend_loop", "fromPort": 2, "to": "p3_midmonth_sync", "toPort": 2 },
+    { "from": "p2c_grocery_loop", "fromPort": 2, "to": "p3_midmonth_sync", "toPort": 3 },
+
+    { "from": "p3_midmonth_sync", "fromPort": 1, "to": "p4_review_merge", "toPort": 1 },
+    { "from": "p2b_special_execute", "fromPort": 1, "to": "p4_review_merge", "toPort": 2 },
+
+    { "from": "p4_review_merge", "fromPort": 1, "to": "p4_review", "toPort": 1 },
+    { "from": "p4_review", "fromPort": 1, "to": "p4_archive", "toPort": 1 },
+    { "from": "p4_archive", "fromPort": 1, "to": "p4_end", "toPort": 1 }
+  ]
+}

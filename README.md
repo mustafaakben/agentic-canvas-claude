@@ -50,6 +50,10 @@ Agent Canvas is a shared planning surface for humans and coding agents:
 
 Exports JSON (schema v0.4) with nodes, connections, port roles, agent metadata, and evidence-backed progress claims. See [SCHEMA.md](SCHEMA.md) for the full specification.
 
+### Examples
+
+Twelve example workflows ship under [`workflows/examples/`](workflows/examples/), one per design pattern (single-full, single-loops, multi-islands, multi-ideation, multi-merge, branch-decision, trycatch-escalation, subflow-composition, pipeline). Each is a working JSON file you can open in the canvas. See [AGENT-CANVAS.md](AGENT-CANVAS.md) for the pattern → example map and [`skills/plan/SKILL.md`](skills/plan/SKILL.md) for the full design contract.
+
 ## CLI
 
 When the plugin is active, the `agent-canvas` command is available in your shell. Skills use it automatically, but you can also run it directly:
@@ -132,9 +136,10 @@ node tests/smoke-cli.mjs       # End-to-end CLI smoke test
 
 ## Documentation
 
-- [AGENT-CANVAS.md](AGENT-CANVAS.md) -- Instructions for agents using the canvas
+- [`skills/plan/SKILL.md`](skills/plan/SKILL.md) -- Design contract (pattern catalog, design recipe, gate semantics) — canonical
+- [AGENT-CANVAS.md](AGENT-CANVAS.md) -- Agent operating handbook (launch, reading order, pattern selection)
 - [SCHEMA.md](SCHEMA.md) -- Workflow JSON schema reference
-- [USER-GUIDE.md](USER-GUIDE.md) -- How to use the browser canvas
+- [USER-GUIDE.md](USER-GUIDE.md) -- Browser canvas guide for humans
 
 ## Requirements
 

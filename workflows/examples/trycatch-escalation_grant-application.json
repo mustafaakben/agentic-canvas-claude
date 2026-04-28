@@ -1,0 +1,120 @@
+{
+  "name": "Grant Application — Trycatch Escalation Demo",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Single-cycle NSF Standard Grant application. Linear plan/draft/submit chain wrapped in a trycatch on the funder decision: funded path activates the award; rejected path runs a structured postmortem and escalates the resubmission decision out of the workflow.",
+    "phases": [
+      "P1 Plan & draft",
+      "P2 Submit (gated on advisor + SPO sign-off)",
+      "P3 Outcome handling (trycatch)"
+    ],
+    "demonstrates": [
+      "Trycatch port semantics: out_1 = ok (funded), out_2 = err (rejected) — per §3 primitives table.",
+      "Two distinct ends (end_funded vs. end_escalate). Collapsing them erases the pattern's value: they are different downstream pipelines, not different framings of the same outcome.",
+      "Trycatch ≠ loop. The err path does NOT loop back to retry. Resubmission, if pursued, is a separate workflow invocation in a future cycle — modeled as a new start_grant, not as a back-edge to p2_draft.",
+      "Wait gate (p3_advisor_signoff) immediately before the irreversible action (submission), per §4.6 and §10 ('wait at every approval/sign-off')."
+    ],
+    "errorPath": {
+      "trycatchNode": "tc_outcome",
+      "okEnd": "end_funded",
+      "errorEnd": "end_escalate",
+      "rationale": "Funded vs. rejected are genuinely distinct downstream pipelines (award activation vs. structured postmortem + strategic resubmit/pivot/shelve decision). Modeling them as ok/err keeps the happy path linear and forces explicit reflection on the rejection branch instead of a quiet retry."
+    },
+    "humanInTheLoop": ["p3_advisor_signoff"],
+    "totalNodes": 10,
+    "totalConnections": 9
+  },
+  "nodes": [
+    {
+      "id": "start_grant",
+      "type": "start",
+      "label": "Start: Grant Cycle",
+      "x": 120,
+      "y": 500,
+      "purposeInstructions": "Grant Application Lead. Initiate a single-cycle application against an NSF Standard Grant solicitation (~12–36 month project, target award size depends on the directorate/program).\n\nOutput a one-paragraph kickoff brief covering:\n- Target solicitation (directorate, program, full solicitation number, submission deadline, expected award size and duration).\n- Roster (PI, Co-PIs, key personnel, named institutional contacts at the Sponsored Programs Office).\n- Internal cycle calendar — back-plan from the deadline: scope-lock date, full-draft date, advisor-review date, SPO-review date (institutional rule: usually 5 business days pre-deadline), submit date.\n- Win condition for this cycle (e.g., 'a competitive submission with strong reviewer alignment on intellectual merit, especially aims 2 and 3').\n\nThis brief is the seed for p1_scope. Do not start drafting yet — scope confirmation comes first."
+    },
+    {
+      "id": "p1_scope",
+      "type": "generic",
+      "label": "Scope & Funder Fit",
+      "x": 300,
+      "y": 500,
+      "purposeInstructions": "Scope and funder-fit confirmation.\n\nRead the solicitation carefully: program description, review criteria (NSF: Intellectual Merit + Broader Impacts), eligibility, budget caps, page limits, special requirements (e.g., letters of collaboration, data management plan format).\n\nFor each NSF review criterion, draft one sentence describing how this specific project will score well. Identify any criterion where the project is currently weak — flag it as a draft-time priority for p2_draft.\n\nConfirm scope match: is this the right program for this idea? If the project would land more naturally in a different NSF directorate, a different funder (NIH, foundations, DARPA), or a different solicitation under the same program, surface that NOW — pivoting after p2_draft is expensive and demoralizing.\n\nOutput: scope-confirmation memo with one of three recommendations — proceed / pivot-to-different-program / abandon — plus a priority list of weak-criterion fixes that p2_draft must address."
+    },
+    {
+      "id": "p2_draft",
+      "type": "generic",
+      "label": "Proposal Draft",
+      "x": 480,
+      "y": 500,
+      "purposeInstructions": "Proposal drafting per NSF Proposal & Award Policies & Procedures Guide (PAPPG).\n\nProduce the full submission package:\n- Project Summary (1 page, structured headers: Overview / Intellectual Merit / Broader Impacts).\n- Project Description (typically 15 pages: Introduction, Results from Prior NSF Support if applicable, Research Plan, Broader Impacts, Evaluation/Assessment).\n- References Cited (no page limit; ASCII-clean).\n- Biographical Sketches (NSF SciENcv format) for PI and every Co-PI.\n- Budget + Budget Justification (line-by-line, reconciled against narrative).\n- Current & Pending Support (every senior person — including unfunded efforts).\n- Facilities, Equipment & Other Resources (no cost commitment).\n- Data Management Plan (≤ 2 pages).\n- Postdoc Mentoring Plan (only if postdocs are budgeted).\n- Letters of Collaboration (only — not letters of support — unless solicitation overrides).\n\nQuality bar before handing to advisor:\n- Specific aims are stated in the first 3 sentences of the Project Description.\n- Every aim has a falsifiable hypothesis or measurable deliverable.\n- Broader Impacts are concrete: named partners, named populations, named outputs — never boilerplate.\n- Budget reconciles line-by-line with the narrative; no surprise expenses.\n- Page count is hard-checked against PAPPG limits before submission. NSF auto-rejects over-limit proposals without review.\n- All weak-criterion priorities from p1_scope are addressed.\n\nOutput: complete, page-checked submission package, ready for p3_advisor_signoff."
+    },
+    {
+      "id": "p3_advisor_signoff",
+      "type": "wait",
+      "label": "Wait: Advisor + SPO Sign-off",
+      "x": 660,
+      "y": 500,
+      "purposeInstructions": "PI advisor + Sponsored Programs Office (SPO) sign-off.\n\nThe workflow stops here until TWO human approvals are documented:\n1. PI advisor (or department chair, per institutional norms) reviews the full package and signs off on scientific quality, aims-narrative coherence, and competitive positioning.\n2. SPO reviews the package and signs off on compliance, budget integrity, indirect-cost calculation, and submission readiness. SPO is the actual submitter on Research.gov — without their clearance, p4_submit cannot proceed.\n\nDocument both approvals in writing (email or DocuSign trail). If either party requests changes, route back to p2_draft outside this workflow — do not auto-loop. Submission without SPO clearance is a compliance violation at most U.S. research institutions and risks blocking future submissions.\n\nThis is the last point at which changes are cheap. After p4_submit, the package is frozen for this cycle."
+    },
+    {
+      "id": "p4_submit",
+      "type": "generic",
+      "label": "Submit to NSF",
+      "x": 840,
+      "y": 500,
+      "purposeInstructions": "Submission via Research.gov (NSF's portal; Grants.gov fallback only if the solicitation requires it).\n\nFinal pre-submit checklist:\n- All required documents uploaded and previewable.\n- All Co-PIs have approved the package on Research.gov.\n- All collaborators have completed Current & Pending Support attestation.\n- Compliance certifications current: Responsible Conduct of Research training for all senior personnel, Conflict of Interest disclosures, financial disclosure statements.\n- Auto-generated cover sheet matches the submission package contents.\n- Submission is queued at least 24 hours before the deadline (Research.gov occasionally has portal incidents on deadline day).\n\nExecute the submission. Capture: confirmation number, exact UTC timestamp, full PDF of the submitted package as auto-generated by Research.gov.\n\nNotify PI, Co-PIs, SPO, and the department's grants administrator. The proposal now enters NSF's review pipeline (typical timeline: 4–6 months from submission — ad-hoc reviews → panel review → program officer recommendation → division director decision).\n\nOutput: submission receipt + calendar marker for the expected decision window. Hand to tc_outcome."
+    },
+    {
+      "id": "tc_outcome",
+      "type": "trycatch",
+      "label": "Trycatch: Funder Decision",
+      "x": 1020,
+      "y": 500,
+      "purposeInstructions": "Funder decision wrapper.\n\nThis node represents the receipt of NSF's decision after review. There are two genuinely distinct downstream pipelines, mapped to ports per §3:\n- out_1 (ok / funded): NSF issues an Award Notice. Triggers the award-activation pipeline (p5_award_setup).\n- out_2 (err / rejected): NSF issues a Decline Notice with panel summary and ad-hoc reviews attached. Triggers the structured postmortem pipeline (p5_postmortem).\n\nCRITICAL: the err path is NOT a retry. Resubmission, if pursued, is a separate workflow invocation in a future cycle — modeled as a new start_grant in a new file/run, NOT as a back-edge to p2_draft. This is the property that distinguishes trycatch from a `loop`.\n\nEdge cases:\n- 'Recommended but not funded' (panel ranked the proposal favorably but program funds were exhausted): route to out_2 with a special note in the postmortem — these are usually strong resubmission candidates.\n- 'Returned without review' (RWR — submitted out of compliance): route to out_2 with the highest-priority correction list, since RWR is reversible in a future cycle.\n- 'No-cost extension' / 'supplemental funding': not modeled here; these belong in the funded-project's execution workflow downstream of end_funded.\n\nOperationally, the team works on other things during the ~6-month review window. The workflow simply parks at this node."
+    },
+    {
+      "id": "p5_award_setup",
+      "type": "generic",
+      "label": "Award Activation (ok)",
+      "x": 1200,
+      "y": 380,
+      "purposeInstructions": "Award activation — ok path. Reached only via tc_outcome.out_1.\n\nOn receipt of the NSF Award Notice:\n- Confirm award terms with SPO: start date, total amount, indirect-cost rate, anticipated period of performance, any special conditions or post-award compliance requirements.\n- Set up the project account in the institution's financial system; assign a budget administrator.\n- Schedule the kickoff meeting: PI + Co-PIs + students/postdocs + SPO contact + departmental grants administrator.\n- File initial Responsible Conduct of Research (RCR) training compliance for any personnel who have not completed it within institutional refresh windows.\n- Calendar all required reports: annual project report due 90 days before each anniversary date; final project report due 120 days after the end date; outcomes report due at end-of-award.\n- Begin year-1 hiring (postdocs, students, staff) if personnel are budgeted; coordinate with HR on start dates.\n- Update the PI's Current & Pending Support records institution-wide.\n\nOutput: project is operational. Hand to end_funded — execution moves to a separate funded-project workflow not modeled in this file."
+    },
+    {
+      "id": "end_funded",
+      "type": "end",
+      "label": "End: Funded",
+      "x": 1380,
+      "y": 380,
+      "purposeInstructions": "Funded — the project enters its execution phase. This end is intentional: the workflow modeled here is application-and-decision, not project-execution. Hand off to whatever project-management workflow runs the funded research."
+    },
+    {
+      "id": "p5_postmortem",
+      "type": "generic",
+      "label": "Rejection Postmortem (err)",
+      "x": 1200,
+      "y": 620,
+      "purposeInstructions": "Rejection postmortem — err path. Reached only via tc_outcome.out_2.\n\nRead the Decline Notice carefully, including the panel summary and any attached ad-hoc reviews. Then perform a structured analysis.\n\nFor each reviewer comment, tag it as one of:\n(a) factual error to correct in any future submission,\n(b) framing/positioning gap (the science is fine, the pitch wasn't),\n(c) genuine scientific concern (methodology, feasibility, prior data),\n(d) preference/taste call (different reviewers would weigh this differently),\n(e) reviewer error worth pushing back on (rare; document carefully).\n\nFor each (a) and (b): draft the specific edit a resubmission would need.\nFor each (c): assess whether new preliminary data, a methodological revision, or a scope adjustment can address it; if not, the project may need to pivot.\nFor each (d) and (e): note for context but do not over-rotate. Resubmissions that chase taste-level comments often weaken.\n\nQuantify the outcome:\n- Was this a 'narrow miss' (panel-ranked favorably but unfunded — strong resubmission candidate)?\n- A 'middle' decline (mixed enthusiasm; resubmission viable with major revision)?\n- A 'reframe required' (scope or framing fundamentally off — consider pivoting funder or rethinking)?\n- An RWR (returned without review for compliance — fix and resubmit next cycle)?\n\nIf valuable, request a courtesy call with the program officer; their context often clarifies which category applies.\n\nOutput a structured postmortem document AND a recommendation to bring to the resubmission decision: resubmit-as-is / resubmit-with-major-revision / pivot-to-different-funder / shelve. Hand to end_escalate."
+    },
+    {
+      "id": "end_escalate",
+      "type": "end",
+      "label": "End: Escalate Decision",
+      "x": 1380,
+      "y": 620,
+      "purposeInstructions": "Escalated — the next strategic decision (resubmit / pivot / shelve) is intentionally OUT of this workflow.\n\nWhy this is an end and not a continuation:\n- Resubmission is a new application cycle, not a continuation. It re-enters the workflow as a new start_grant (potentially in a new JSON file, new run, new calendar).\n- Pivoting to a different funder is a different solicitation, different review criteria, and different scope decisions; it warrants a fresh scoping pass.\n- Shelving is a non-action; the project may revive later under different conditions.\n\nThis end node hands the postmortem document and recommendation to the strategic conversation between PI and advisor. Whatever they decide instantiates the next workflow — never a back-edge into this one."
+    }
+  ],
+  "connections": [
+    { "from": "start_grant",        "fromPort": 1, "to": "p1_scope",           "toPort": 1 },
+    { "from": "p1_scope",           "fromPort": 1, "to": "p2_draft",           "toPort": 1 },
+    { "from": "p2_draft",           "fromPort": 1, "to": "p3_advisor_signoff", "toPort": 1 },
+    { "from": "p3_advisor_signoff", "fromPort": 1, "to": "p4_submit",          "toPort": 1 },
+    { "from": "p4_submit",          "fromPort": 1, "to": "tc_outcome",         "toPort": 1 },
+    { "from": "tc_outcome",         "fromPort": 1, "to": "p5_award_setup",     "toPort": 1 },
+    { "from": "p5_award_setup",     "fromPort": 1, "to": "end_funded",         "toPort": 1 },
+    { "from": "tc_outcome",         "fromPort": 2, "to": "p5_postmortem",      "toPort": 1 },
+    { "from": "p5_postmortem",      "fromPort": 1, "to": "end_escalate",       "toPort": 1 }
+  ]
+}

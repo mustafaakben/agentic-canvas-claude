@@ -1,0 +1,119 @@
+{
+  "name": "Paper Submission — Branch Decision Demo",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Single-cycle journal manuscript submission. Structured self-review feeds a binary branch (READY vs. REVISE); both paths converge at a merge before co-author sign-off and submission.",
+    "phases": [
+      "P1 Self-review",
+      "P2 Branch & resolve (paths reconverge)",
+      "P3 Sign-off & submit"
+    ],
+    "demonstrates": [
+      "Branch port semantics: out_1 = top branch (first option), out_2 = bottom branch (second option) — per §3 primitives table and §9 validation eyeball check.",
+      "Branch + merge is the right pair when both branches genuinely reconverge (§4.4). The shared downstream step (submission) is what justifies the merge — without convergence, paths should terminate at distinct ends instead.",
+      "Branch ≠ trycatch. Both have 2 outputs but mean different things. Branch = the team's own decision with reconvergent paths (merge). Trycatch = wrapping an external uncertain outcome with NON-reconvergent ends (no merge). See `meta.compareWith` for the side-by-side.",
+      "Branch ≠ loop. A loop would be 'revise repeatedly until it passes self-review.' That's §4.3 with a stop condition, not a single branch — branch is a one-shot decision.",
+      "Decision criterion at the branch is OPERATIONAL, not vague. p1_self_review's bottom-line recommendation (READY / REVISE) drives the branch — the rule is encoded, not improvised at runtime."
+    ],
+    "branchDecision": {
+      "branchNode": "branch_ready",
+      "out_1_label": "READY (top)",
+      "out_1_path": ["p2_polish", "merge_submit"],
+      "out_2_label": "REVISE (bottom)",
+      "out_2_path": ["p2_revise", "merge_submit"],
+      "decisionCriterion": "READY = zero blockers AND ≤ 2 majors AND no major requires new content. REVISE = any blocker OR ≥ 3 majors OR any major requiring new analyses, new theoretical framing, or new data.",
+      "convergencePoint": "merge_submit"
+    },
+    "humanInTheLoop": ["p3_coauthor_signoff"],
+    "compareWith": {
+      "trycatch-escalation_grant-application.json": "Both files use a 2-output primitive immediately before an irreversible action. The difference is the NATURE of the split, which determines the right primitive. (a) BRANCH (this file): the team's own decision based on self-review. Both paths converge to the same downstream pipeline (submission). Use branch + merge. (b) TRYCATCH (the other file): wraps an external uncertain outcome (the funder's decision). The two outcomes have GENUINELY DIFFERENT downstream pipelines (award activation vs. resubmit/pivot decision). Use trycatch + two distinct ends, no merge. Pick the primitive based on whether the paths reconverge — that's the test."
+    },
+    "totalNodes": 9,
+    "totalConnections": 9
+  },
+  "nodes": [
+    {
+      "id": "start_paper",
+      "type": "start",
+      "label": "Start: Paper Cycle",
+      "x": 120,
+      "y": 500,
+      "purposeInstructions": "Lead Author. Initiate the journal-submission cycle for an empirical or meta-analysis manuscript. Target venue: a top I/O psychology journal (Journal of Applied Psychology, Personnel Psychology, Academy of Management Journal, Organization Science, or similar). The demo uses JAP as the placeholder target.\n\nOutput a one-paragraph kickoff brief covering:\n- Manuscript title and current state (final draft? near-final pending one analysis? polishing pass needed?).\n- Author roster with corresponding-author designation, ordering, and institutional affiliations. Confirm CRediT contributor categories will be available for submission.\n- Target journal + the specific submission portal (Editorial Manager, ScholarOne Manuscripts, OpenReview, journal-direct).\n- Pre-submission requirements specific to this journal: title-page format, masked vs. unmasked review, supplemental materials policy, page/word limits, reference style (APA 7 typical for I/O psychology), figure resolution requirements.\n- Internal deadline (if any external pressure: conference timing, grant report milestone, tenure clock, co-author availability).\n- The win condition for THIS submission. Be specific: 'send out for review at JAP without desk reject' is a different bar than 'maximize chance of acceptance' — the former drives less risk-averse framing.\n\nThis brief is the seed for p1_self_review. Do not start formatting or polishing yet — self-review against the target journal's bar comes first."
+    },
+    {
+      "id": "p1_self_review",
+      "type": "generic",
+      "label": "Structured Self-Review",
+      "x": 300,
+      "y": 500,
+      "purposeInstructions": "Structured self-review against the target journal's evaluation criteria. The output of this node is the input to the branch — so it must produce an unambiguous recommendation, not a hedge.\n\nReview the full manuscript across three layers, with explicit checks at each:\n\nCONTENT:\n- Theory contribution: is the conceptual contribution stated clearly in the introduction (within the first ~3 paragraphs) and re-confirmed in the discussion?\n- Method rigor: are sample selection, measures, and analyses appropriate and clearly described? Are pre-registration / data-sharing claims accurate (matched to the OSF/repository links)?\n- Results presentation: do tables and figures stand alone with their captions? Are effect sizes reported with confidence intervals (point estimates alone are not enough)? Are robustness checks present where reviewers will expect them?\n- Discussion: does it engage genuine alternative explanations and limitations rather than waving them off?\n\nALIGNMENT WITH TARGET JOURNAL:\n- Does the manuscript fit the journal's scope? Read three recent issues to confirm — if the journal hasn't published comparable work in the last 18 months, that is a desk-reject risk.\n- Does it cite recent papers from the target journal where naturally relevant? Reviewers and editors check this.\n\nPRESENTATION:\n- Word count under journal limit (with cushion for revision-driven additions).\n- Reference style matches journal exactly (APA 7 for most I/O venues).\n- Tables and figures comply with submission-format guidelines.\n- All co-authors' affiliations and ORCIDs current.\n- Cover letter drafted: names the editor, identifies submission category, summarizes contribution in 3–4 sentences, declares conflicts.\n\nTag every issue found by severity:\n(a) BLOCKER — would cause desk reject or compliance failure (e.g., over the word limit, missing required disclosure, masked-review violation).\n(b) MAJOR — would cause poor reviews and substantively reduce acceptance odds (e.g., a missing robustness analysis, an unaddressed alternative explanation, an outdated literature anchor).\n(c) MINOR — would prompt polish requests (e.g., typo in Table 2 caption, citation formatting).\n\nOutput: structured self-review report with all (a)/(b)/(c) issues categorized, plus a single bottom-line recommendation that drives branch_ready: SUBMIT (zero blockers, ≤ 2 majors, no major requires new content) OR REVISE (anything else)."
+    },
+    {
+      "id": "branch_ready",
+      "type": "branch",
+      "label": "Branch: Ready?",
+      "x": 480,
+      "y": 500,
+      "purposeInstructions": "Branch decision: ready to submit, or needs revision first?\n\nApply the rule encoded by p1_self_review's bottom-line recommendation:\n- out_1 (TOP, READY) → routes to p2_polish. Triggered by: zero blockers AND ≤ 2 major issues AND no major issue requires new content (analyses / framing / data).\n- out_2 (BOTTOM, REVISE) → routes to p2_revise. Triggered by: any blocker OR ≥ 3 major issues OR any major issue that requires new content.\n\nPort semantics (per §3 primitives table and §9 validation):\n- out_1 = top branch (first option).\n- out_2 = bottom branch (second option).\n- Label both clearly so a future reader cannot confuse them.\n\nThis decision is binary BY DESIGN. If a real workflow needs three states (ready / minor revision / major revision), chain a second branch downstream — DO NOT collapse three states into one fuzzy node. Single branches resist scope creep precisely because they are binary.\n\nNote — primitive contrast (preserved here for the demo's pedagogical value):\n- This is a `branch`, not a `trycatch`: the team is making a deliberate decision, not catching an error from an external system.\n- This is a `branch`, not a `loop`: a loop would be 'revise iteratively until it passes self-review.' That is §4.3 with a stop condition. The branch is a one-shot route.\n\nOutput: branch decision (READY or REVISE) with a one-sentence rationale citing the specific blocker or major issues that drove the call."
+    },
+    {
+      "id": "p2_polish",
+      "type": "generic",
+      "label": "Final Polish",
+      "x": 660,
+      "y": 380,
+      "purposeInstructions": "Final polish — taken when branch_ready routes to out_1 (READY).\n\nNo scientific content changes; presentation only. Tasks:\n- Resolve every (c) minor issue from p1_self_review.\n- Final passes for typos, spacing, hyphenation, table captions, figure captions, axis labels, abbreviation expansions on first use.\n- Verify reference list integrity — every cited paper present, every listed paper cited, DOIs current and resolving, in-text citations match list.\n- Confirm tables and figures render at journal-required resolution and color modes (some journals require print-safe grayscale alternatives).\n- Finalize the cover letter: address the current Editor-in-Chief or relevant Action Editor by name, state the submission category exactly as journal labels it, summarize the contribution in 3–4 sentences, declare conflicts, request specific reviewers only if the journal explicitly invites suggestions.\n- Anonymize the manuscript if the journal uses masked review: remove author names from headers/footers, scrub document properties (Word/LaTeX often leaves author metadata), neutralize self-citations to '(Authors, YEAR)' or per the journal's masking rule.\n- Final word-count check against journal limits — over by even one word triggers desk return at some journals.\n\nOutput: submission-ready package. Hand to merge_submit on input port 1 (matching the top branch route)."
+    },
+    {
+      "id": "p2_revise",
+      "type": "generic",
+      "label": "Targeted Revision",
+      "x": 660,
+      "y": 620,
+      "purposeInstructions": "Targeted revision — taken when branch_ready routes to out_2 (REVISE).\n\nScientific or structural content changes ARE in scope here. Tasks:\n- For each (a) blocker from p1_self_review: fix or kill the manuscript. Blockers cannot be hand-waved — they are reasons for desk rejection (over word limit, missing required disclosure, broken core analysis, etc.).\n- For each (b) major issue: implement the specific change. If a major issue requires new analyses or new data, complete those FIRST before resuming polish — never paper over a missing analysis with prose.\n- Re-validate that no NEW issues are introduced by the revision. Revisions commonly break things: references go out of order, table numbering shifts, summary statistics no longer match the new analyses, abstract no longer matches the body's claims. Run a delta-check.\n- If the revision touches the central claim or theoretical framing, re-loop with co-authors before merge — do not silently change the contribution. Co-author trust is harder to rebuild than a deadline is to push.\n- If the revision uncovered fresh blockers, you may need a second cycle. Model that as a separate workflow run (a new start_paper invocation), NOT as a back-edge to p1_self_review here. This file's branch is single-shot by design — repeating cycles is a §4.3 loop pattern, not what this demo teaches.\n\nOutput: revised manuscript at submission-ready quality. Hand to merge_submit on input port 2 (matching the bottom branch route)."
+    },
+    {
+      "id": "merge_submit",
+      "type": "merge",
+      "label": "Merge: Reconverge",
+      "x": 840,
+      "y": 500,
+      "purposeInstructions": "Merge: both branches converge here.\n\nStructurally, the merge is trivial — the manuscript is now submission-ready, regardless of which branch produced it. But the merge is pedagogically central: it is what makes this a §4.4 branch+merge pattern rather than a §4.5 trycatch pattern.\n\nThe defining test (apply this when designing future workflows):\n- Do the two paths converge to a SHARED downstream step? → branch + merge (this file).\n- Do the two paths terminate at GENUINELY DIFFERENT downstream pipelines? → trycatch + two distinct ends, no merge (see trycatch-escalation_grant-application.json).\n\nHere both paths produce a manuscript that goes through the same submission portal, signed off by the same co-authors, on the same journal's clock. So they belong at a merge.\n\nMerge semantics: input port 1 receives from p2_polish (top, READY route); input port 2 receives from p2_revise (bottom, REVISE route). The merge waits for whichever input arrives — branches are mutually exclusive at runtime, so only one input fires per workflow run.\n\nOutput: a single submission-ready manuscript. Hand to p3_coauthor_signoff."
+    },
+    {
+      "id": "p3_coauthor_signoff",
+      "type": "wait",
+      "label": "Wait: All Authors OK",
+      "x": 1080,
+      "y": 500,
+      "purposeInstructions": "Co-author sign-off — wait gate immediately before the irreversible submission action.\n\nThe workflow stops here until ALL co-authors approve the final submission package. Approval must be documented in writing (email, DocuSign, slack-with-screenshot — anything timestamped and unambiguous). Silence is not approval.\n\nWhy a wait gate, and why HERE specifically:\n- Submission is effectively irreversible for this journal cycle. Most journals lock the submission record on receipt; withdrawal-and-resubmit is procedurally awkward and editorially noticed.\n- Co-authors carry legal authorship liability and reputational stakes. Unilateral submission by the corresponding author without explicit co-author approval is a serious violation of authorship norms (and at many institutions, of research integrity policy).\n- This is the LAST point at which a co-author can ask 'wait, did we add the new analysis I suggested?' without escalating to formal withdrawal.\n\nIf any co-author requests changes, route back to p2_revise OUTSIDE this workflow — do not silently auto-loop here. The journal does not care that we revised; the submission must reflect the version all authors agreed to.\n\nPer §4.6 + §10 user prefs ('wait at every approval/sign-off'). The label names WHO approves; the instructions name WHAT they're approving."
+    },
+    {
+      "id": "p4_submit",
+      "type": "generic",
+      "label": "Submit to Journal",
+      "x": 1260,
+      "y": 500,
+      "purposeInstructions": "Submit via the journal's portal (Editorial Manager, ScholarOne Manuscripts, OpenReview, or journal-direct).\n\nFinal pre-submit checklist:\n- Submission portal account active for the corresponding author; co-authors registered and confirmed where required by the system.\n- Cover letter, manuscript file, table file, figure files, supplementary materials all uploaded in the journal-required formats and file-size limits.\n- Author contributions entered using the CRediT taxonomy if the journal requires it.\n- Conflict-of-interest statements complete for all authors (matched to each author's actual disclosures, not boilerplate).\n- Suggested or excluded reviewers entered if the journal requests them — be honest about exclusions.\n- Funding statement matches the grants supporting the work, with grant numbers.\n- Data and code availability statement entered, with repository URLs that resolve.\n- Pre-registration link entered if applicable.\n\nExecute the submission. Capture: submission ID, exact UTC timestamp, and the full PDF as auto-generated by the portal (this is the document the editors and reviewers will see — verify it before celebrating).\n\nNotify all co-authors with the confirmation. Submission enters the journal's queue: typical timeline is editor triage in 1–2 weeks (desk decision or send-for-review), reviewer assignment variable, first decision in roughly 3–6 months for I/O psychology venues.\n\nHand to end_submitted."
+    },
+    {
+      "id": "end_submitted",
+      "type": "end",
+      "label": "End: Submitted",
+      "x": 1440,
+      "y": 500,
+      "purposeInstructions": "Submitted — the manuscript has entered the journal's review pipeline.\n\nThis end is intentional: the workflow modeled here is submission-only. Decision handling (revise-and-resubmit, accept, reject) belongs to a SEPARATE downstream workflow not modeled in this file.\n\nNote on rejection: a 'reject' outcome from the journal would invoke a new submission workflow at a different journal — modeled as a fresh start_paper invocation with a different target, NOT as a back-edge into this file. This mirrors the resubmission semantics in trycatch-escalation_grant-application.json: a new workflow invocation, never a loop back."
+    }
+  ],
+  "connections": [
+    { "from": "start_paper",         "fromPort": 1, "to": "p1_self_review",      "toPort": 1 },
+    { "from": "p1_self_review",      "fromPort": 1, "to": "branch_ready",        "toPort": 1 },
+    { "from": "branch_ready",        "fromPort": 1, "to": "p2_polish",           "toPort": 1 },
+    { "from": "branch_ready",        "fromPort": 2, "to": "p2_revise",           "toPort": 1 },
+    { "from": "p2_polish",           "fromPort": 1, "to": "merge_submit",        "toPort": 1 },
+    { "from": "p2_revise",           "fromPort": 1, "to": "merge_submit",        "toPort": 2 },
+    { "from": "merge_submit",        "fromPort": 1, "to": "p3_coauthor_signoff", "toPort": 1 },
+    { "from": "p3_coauthor_signoff", "fromPort": 1, "to": "p4_submit",           "toPort": 1 },
+    { "from": "p4_submit",           "fromPort": 1, "to": "end_submitted",       "toPort": 1 }
+  ]
+}

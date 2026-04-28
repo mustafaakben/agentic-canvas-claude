@@ -1,0 +1,301 @@
+{
+  "name": "Multi-Platform Content Publishing — Multi-Islands Demo (Four Cadences)",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Multi-platform content publishing as four genuinely independent chains: Twitter/X (daily), LinkedIn (weekly), Newsletter (bi-weekly), Blog (monthly). Each chain runs on its own cadence, with its own owner profile, its own deliverable, and its own internal shape — no inter-dependencies, no shared merge inside the workflow.",
+    "phases": [
+      "Each chain has its OWN internal phasing (different per chain). Workflow-level phases are NOT applicable: §4.7 chains shouldn't share a phase calendar, because their cadences differ structurally."
+    ],
+    "demonstrates": [
+      "§4.7 multi-islands pattern — four start nodes, four separate sub-pipelines on different cadences (daily / weekly / bi-weekly / monthly), four distinct end nodes. NO connections between chains. Topologically four islands; the canvas renders them as disconnected horizontal chains.",
+      "ASYMMETRIC chain shapes — the most important pedagogical signal of this demo. Chains have different node counts (4 / 5 / 6 / 7) and different internal primitives (Twitter has a `loop`, Newsletter has a `wait`). The asymmetry IS the §4.7 signature: chains have different cadences and owners, so their internal shapes reflect that.",
+      "Multi-islands (§4.7) ≠ multi-ideation (§4.8). Both have multiple starts and no merge. The DIFFERENCE: §4.7 chains do NOT share a question (Twitter and Blog do different work for different audiences); §4.8 chains DO share a question (the syllabus demo's three lenses all answer 'how should we redesign?'). Topology alone cannot distinguish the two patterns — `meta.islands` (§4.7) vs. `meta.ideationStarts` (§4.8) is the canonical signal.",
+      "Independence is enforced by ABSENCE of edges. There is no special canvas primitive marking 'island boundary.' §4.7 expresses independence simply by chains not connecting. Adding a connection between chains silently converts this from §4.7 to a single-start workflow with a parallel — and that conversion is almost always wrong, because the chains' cadences are incompatible with workflow-level synchronization.",
+      "Mixing primitives WITHIN an island is encouraged and pedagogically valuable. Twitter uses a `loop` (§4.3); Newsletter uses a `wait` (§4.6). Multi-islands chains can compose any internal pattern — they're full sub-workflows, not just linear chains."
+    ],
+    "whenToUse": "Use §4.7 multi-islands when ALL FOUR hold: (1) chains have no inter-dependencies (no chain blocks on another's output during execution), (2) chains ship on different cadences and/or have different owners, (3) one chain can be paused or cancelled without blocking the others, (4) the deliverables are distinct (or any merge happens much later, off-canvas, e.g., quarterly brand strategy review). NOT for: chains that secretly share a structural dependency (use single-start with parallel fan-out), chains pursuing different framings of the same question (use §4.8 multi-ideation), or chains that produce one combined deliverable (use multi-merge, see multi-merge_landing-page.json).",
+    "islands": [
+      {
+        "start": "start_twitter",
+        "end": "end_twitter",
+        "platform": "Twitter / X",
+        "cadence": "Daily (1–3 posts/day; weekly threads)",
+        "owner": "Brand voice (typically the principal)",
+        "deliverable": "Daily posts and threads building follower base + engagement signal",
+        "internalPrimitives": ["loop"],
+        "internalShapeRationale": "Daily cadence demands iteration — the loop primitive captures the recurring ideate-post-measure cycle without inflating the chain to one node per day.",
+        "nodeCount": 4
+      },
+      {
+        "start": "start_linkedin",
+        "end": "end_linkedin",
+        "platform": "LinkedIn",
+        "cadence": "Weekly (1 long-form post)",
+        "owner": "Brand voice + occasionally a content collaborator",
+        "deliverable": "Weekly long-form posts targeting executives and decision-makers",
+        "internalPrimitives": [],
+        "internalShapeRationale": "Weekly cadence supports a clean linear chain (research → draft → publish). No iteration is needed within a single post; the cadence handles itself by repeated invocation of the chain.",
+        "nodeCount": 5
+      },
+      {
+        "start": "start_newsletter",
+        "end": "end_newsletter",
+        "platform": "Newsletter",
+        "cadence": "Bi-weekly (every other Thursday morning ET)",
+        "owner": "Lead writer + editor (the editor is the gate)",
+        "deliverable": "Bi-weekly deep-dive issues for paid subscribers",
+        "internalPrimitives": ["wait"],
+        "internalShapeRationale": "Paid-subscriber cadence demands an editorial gate — the wait primitive enforces the 'do not send without sign-off' discipline. Without the gate, a quality lapse arrives in 1500+ inboxes irrevocably.",
+        "nodeCount": 6
+      },
+      {
+        "start": "start_blog",
+        "end": "end_blog",
+        "platform": "Blog (personal/research site)",
+        "cadence": "Monthly (1 pillar post)",
+        "owner": "Lead writer + peer reviewer",
+        "deliverable": "Monthly pillar posts as durable SEO + intellectual record",
+        "internalPrimitives": [],
+        "internalShapeRationale": "Monthly cadence supports the longest linear chain (5 generics across pillar selection through publication). Peer review here is a STEP done by an agent (not a wait gate) — pedagogically distinct from the newsletter's wait, showing two legitimate ways to model 'review.'",
+        "nodeCount": 7
+      }
+    ],
+    "iterativeLoops": [
+      {
+        "node": "t_daily_loop",
+        "iteratesOver": "Days within the Twitter campaign — each iteration is one day's ideate-post-measure cycle",
+        "exitWhen": "Campaign quarter ends OR audience-growth target hit OR engagement decline >2 weeks signals strategy reset OR owner pause/pivot"
+      }
+    ],
+    "antiPatterns": [
+      "EDGES BETWEEN CHAINS — connections like t_daily_loop → li_research violate islands isolation. If LinkedIn content sometimes derives from a viral tweet, that derivation happens off-canvas (in the brand's content review), NOT as an in-workflow edge. The discipline: chains touch only through human judgment off-canvas, never via canvas wiring. Even one cross-chain edge converts the workflow from §4.7 to a hybrid, and the chains' cadence-incompatibility breaks down.",
+      "SHARED MERGE — adding a 'cross-platform recap' or 'brand performance synthesis' merge node defeats the pattern. Each chain ends at its own end. Brand-level recaps happen off-canvas — typically as a quarterly report invoked as a separate workflow.",
+      "FORCED SYMMETRY — making all four chains 5 nodes each for visual neatness erases the most important §4.7 signal: chains have different cadences and therefore different internal shapes. A symmetric §4.7 demo looks like a §4.8 demo and obscures the pattern.",
+      "FORCING ALL CHAINS INTO ONE FILE — for a real practitioner, multi-platform content publishing might genuinely live in 4 separate JSON files (one per platform), each invoked independently on its own cadence. Putting them in one file is for VIEWING convenience (so the cross-platform shape is visible), not for execution dependency. A future orchestrator dispatching this workflow should treat each island as if it were a standalone JSON.",
+      "TREATING THE ISLANDS AS A SINGLE BRAND BUDGET — although the chains share a brand, they should NOT share a workflow-level budget or schedule. If LinkedIn's owner is overloaded one week, the blog's monthly cadence is unaffected. If the newsletter's editor is on vacation, the daily Twitter loop continues. The brand-level coordination is off-canvas; the canvas models the work, not the org chart."
+    ],
+    "compareWith": {
+      "multi-ideation_syllabus-redesign.json": "§4.8 sibling pattern. Both files have multiple starts and no merge — topologically identical. The DIFFERENCE: in §4.8, all chains pursue the SAME question through divergent framings (constructivist / behaviorist / PBL on syllabus redesign); the divergent artifacts ARE the deliverable, comparison happens off-canvas. In this file (§4.7), chains do NOT share a question — Twitter / LinkedIn / Newsletter / Blog execute different work streams on different cadences with different owners. The meta convention is the canonical signal: this file has `islands`, the syllabus file has `ideationStarts`. Future agents: read the meta block to disambiguate when the topology alone cannot.",
+      "multi-merge_landing-page.json": "Multi-merge variant. That file has 3 starts that DO converge at a terminal merge (cross-functional integration of UI + content + code into one landing page). Multi-merge produces ONE deliverable from multiple starts; multi-islands produces FOUR independent deliverables. The choice between them is structural: do parallel arms produce one thing or many things? If many, never collapse them at a merge.",
+      "subflow-composition_course-launch.json": "Subflow demo, different pattern entirely. But worth noting: the four islands here COULD each become a `subflow` node inside a higher-level 'brand strategy' workflow if each chain matured into its own JSON file (likely the right move at scale). That higher-level workflow would have 4 subflow nodes and would be a subflow-composition demo, not §4.7. The progression — separate islands → separate JSON files invoked as subflows → unified strategy graph — is a maturation path many real workflows take."
+    },
+    "humanInTheLoop": ["nl_review"],
+    "totalNodes": 22,
+    "totalConnections": 18
+  },
+  "nodes": [
+
+    {
+      "id": "start_twitter",
+      "type": "start",
+      "label": "Start: Twitter/X",
+      "x": 120,
+      "y": 200,
+      "purposeInstructions": "Twitter/X Lead. Initiate the daily Twitter/X content track for the brand 'AI in Business' (placeholder — substitute your actual brand).\n\nOutput a one-paragraph kickoff brief covering:\n- Audience: AI-curious technologists, builders, mid-career professionals exploring AI tooling. Mostly U.S. timezones, with active EU and APAC tails.\n- Cadence: 1–3 posts/day, mix of short observations, replies-as-content, and 1 thread per week. Posting calendar respects U.S.-morning peak engagement (8–10am ET).\n- Voice: direct, opinionated, occasionally provocative. Concrete examples > abstract takes. No corporate-speak; no consultant hedge-words.\n- Strategic intent: build follower base + engagement signal. Twitter is the brand's REAL-TIME-LEARNING channel — what resonates here informs (off-canvas) the slower channels' content selection.\n- Win condition: 5,000 net new followers per quarter; 2–3 viral threads (>500 engagement) per quarter; ≥1 inbound speaking/consulting inquiry/month attributable to Twitter.\n\nIndependence note (§4.7 discipline): this chain runs its own daily cadence. Do NOT block on, or pull in-workflow content from, the LinkedIn / Newsletter / Blog chains. Cross-pollination of IDEAS happens off-canvas (in the brand's content review), not via in-workflow edges. Per §4.7, multi-islands chains have no inter-dependencies — adding such an edge would silently convert this workflow from §4.7 islands into a coupled multi-start, which would then break under the chains' cadence asymmetry.\n\nThis brief seeds t_calendar_setup."
+    },
+    {
+      "id": "t_calendar_setup",
+      "type": "generic",
+      "label": "Calendar Setup",
+      "x": 300,
+      "y": 200,
+      "purposeInstructions": "One-time tooling and calendar setup before the daily loop begins.\n\nTasks:\n- Posting tool configured (Hypefury / Typefully / native scheduler). Decide whether you'll use scheduled-queue posting or post-as-you-go; both work, but mixing them inconsistently leads to dead days.\n- Daily review block on calendar (e.g., 30 min/morning, 15 min/afternoon for engagement triage).\n- Threadstart bank: prepare 5 thread skeletons from accumulated notes — these are the rainy-day reservoir for low-energy days when daily posting would otherwise lapse.\n- Engagement triage rules: which replies trigger immediate response (high-signal accounts, on-topic substantive questions), which get batched (general supportive comments), which get ignored (bait, off-topic, low-signal).\n- Performance tracking: pick the ONE primary metric that drives optimization (impressions / engagement-rate / follower-velocity / outbound clicks). Optimizing across many metrics simultaneously degrades all of them.\n\nOutput: a configured posting environment + a starter content reservoir + a ranked metric for the loop to target. Hand to t_daily_loop."
+    },
+    {
+      "id": "t_daily_loop",
+      "type": "loop",
+      "label": "Loop: Daily Cycle",
+      "x": 480,
+      "y": 200,
+      "inputs": 2,
+      "outputs": 2,
+      "loopDefinition": "Daily ideate-post-measure cycle for the Twitter/X track. Each iteration represents one day of: morning capture → quality gate → post → engage → measure.",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "Campaign quarter ends (typical 13-week duration)" },
+        { "text": "Audience-growth target hit (5,000 net new followers per quarter)" },
+        { "text": "Engagement decline >2 consecutive weeks (signals strategy reset; pause to evaluate)" },
+        { "text": "Owner request — campaign pivot, hand-off, or hiatus" }
+      ],
+      "purposeInstructions": "Daily ideate-post-measure cycle.\n\nEach iteration (one day):\n1. Morning capture: scan timeline + saved notes, surface 1–3 posting candidates from the day's developments and your accumulated drafts.\n2. Quality gate: kill anything that's bland, reactive, or feels like 'should-post' obligation. Better to skip a day than post filler. The brand's signal-to-noise ratio is more durable than its post count.\n3. Post: 1–3 short tweets OR 1 thread. Engagement-bait (clickbait questions, ragebait, manufactured hot takes) is rejected — it works short-term but corrodes trust and attracts the wrong audience.\n4. Engage: respond to replies on today's posts within ~3 hours; batch older replies in afternoon block. The first hour is where the algorithm decides distribution, so responsiveness in that window is the highest-leverage activity.\n5. Measure: end-of-day note (1–2 sentences) on what worked / what flopped / one hypothesis to test tomorrow. The note feeds the rolling weekly retro that informs (off-canvas) the slower channels' content decisions.\n\nThis loop is the SIGNATURE PRIMITIVE of this multi-islands demo: Twitter's daily cadence demands iteration, while Newsletter has a wait gate (bi-weekly) and Blog runs as a longer linear chain (monthly). All three are valid §4.7 islands; their internal shapes differ because their cadences differ. That asymmetry IS what the demo teaches.\n\nstopConditions are encoded on this node — see fields above for the specific exit criteria. stopMode is 'any' (any one condition triggers exit)."
+    },
+    {
+      "id": "end_twitter",
+      "type": "end",
+      "label": "End: Twitter/X",
+      "x": 660,
+      "y": 200,
+      "purposeInstructions": "Twitter/X content track ended (campaign concluded, strategy pivot, or owner change).\n\nThis end is INTENTIONAL. The §4.7 pattern requires no merge with other chains. The Twitter chain shipped independently of LinkedIn / Newsletter / Blog. If the brand's overall strategy demands a coordinated wind-down across platforms, that coordination happens OFF-CANVAS (in brand strategy review or quarterly retro), not through in-workflow edges. Per §4.7: 'one pipeline can be paused or cancelled without blocking the others.'"
+    },
+
+    {
+      "id": "start_linkedin",
+      "type": "start",
+      "label": "Start: LinkedIn",
+      "x": 120,
+      "y": 500,
+      "purposeInstructions": "LinkedIn Lead. Initiate the weekly LinkedIn long-form track for the same brand.\n\nOutput a one-paragraph kickoff brief covering:\n- Audience: executives, business leaders, mid-senior professionals interested in AI strategy. LinkedIn-native audience expects LinkedIn-native conventions (no link-only posts; native video; document carousels; little to no jargon).\n- Cadence: 1 long-form post per week, published Tuesday 7–9am ET (the algorithm's morning surface targets U.S. business hours).\n- Voice: thoughtful, structured, signal-heavy. Less personal than Twitter; more analytical than the newsletter; less academically rigorous than the blog. The LinkedIn voice is 'experienced practitioner sharing a hard-won frame.'\n- Strategic intent: build authority among decision-makers; create gateway content that drives newsletter subscriptions and inbound business inquiries. LinkedIn is the brand's CREDIBILITY-COMPOUND channel.\n- Win condition: 10K–15K impressions per post; 3–5 saves-by-decision-makers per post (proxy for actual influence — better than likes); ≥1 substantive inbound message/post.\n\nIndependence note (§4.7 discipline): this chain runs its own weekly cadence with its own owner profile. Cross-pollination with Twitter / Newsletter / Blog is OFF-CANVAS only — per §4.7, multi-islands chains do not share in-workflow edges. If a LinkedIn post adapts a viral tweet's frame, that adaptation is a brand-strategy decision happening between cycles, not a structural edge in this workflow.\n\nThis brief seeds li_research."
+    },
+    {
+      "id": "li_research",
+      "type": "generic",
+      "label": "Weekly Research",
+      "x": 300,
+      "y": 500,
+      "purposeInstructions": "Weekly research before drafting (Friday or early Monday).\n\nTasks:\n- Scan the past week's executive-level discussions on LinkedIn around AI in business. Note 2–3 prevailing narratives (what's everyone agreeing on?) and 1 contrarian angle that has thin evidence on either side.\n- Identify a piece of original analysis the brand can offer this week — a frame, a contrarian read, a tactical synthesis, or a clarifying distinction.\n- Pull supporting data: 2–3 specific examples, ideally from named companies with public information (10-Ks, public statements, well-reported industry coverage).\n- Verify the angle is week-relevant. Evergreen content lives on the blog; LinkedIn rewards timeliness.\n\nOutput: a research brief seeding li_draft. The angle must be specific enough to hold an executive's attention but not so technical that LinkedIn's broader audience tunes out. If you can't summarize the angle in one sentence, it's not ready."
+    },
+    {
+      "id": "li_draft",
+      "type": "generic",
+      "label": "Long-form Draft",
+      "x": 480,
+      "y": 500,
+      "purposeInstructions": "Draft the long-form LinkedIn post.\n\nLinkedIn-optimized structure:\n- Hook (first 3 lines, before the 'see more' fold): make the click worth it. Avoid the 'I made a controversial decision today' template — LinkedIn has trained users to skip it. Specific, concrete openings outperform vague-promise openings.\n- Body (5–12 short paragraphs, 1–2 sentences each): structured argument with a clear arc. Use line breaks generously. Numbered or bulleted lists where the structure naturally fits — but only when they fit; forced lists feel manufactured.\n- Specific examples (named): 2–3 named-company or named-decision references with enough detail that the reader can verify if they want to.\n- Closing reflection: leave a question or a tension, not a tidy bow. Tidy bows close conversation; LinkedIn rewards comments.\n- Length: ~300–600 words. Native LinkedIn limit is 3,000 chars; over ~600 words you lose readers and the algorithm penalizes the dwell-time-per-impression ratio.\n\nHashtags: 1–3 hashtags max, at the end. Keyword stuffing is now penalized by the algorithm.\n\nOutput: ready-to-publish post + 2 alternative hooks (LinkedIn rewards iteration on opening lines — A/B if your account supports it). Hand to li_publish."
+    },
+    {
+      "id": "li_publish",
+      "type": "generic",
+      "label": "Publish & Engage",
+      "x": 660,
+      "y": 500,
+      "purposeInstructions": "Publish + first-hour engagement window.\n\nSequence:\n- Publish at the planned time (Tuesday 7–9am ET). Posts going up outside this window typically lose 30–60% of their potential reach.\n- For the first 60 minutes, monitor and reply to every substantive comment within 5 minutes. The algorithm rewards conversation density in the first hour, and replies are the strongest engagement signal.\n- Crosspost the post to relevant communities (alumni group, AI-related professional groups) WITHOUT being a self-promotion bot. Only in groups where the community has signaled this kind of content is welcome; otherwise it actively harms reputation.\n- 24-hour check-in: review the analytics. Note impressions, click-through, saves, dwell time. Save the takeaway for li_research's input next week.\n\nOutput: published post, engagement run captured, lessons-learned note for next week's research input. Hand to end_linkedin."
+    },
+    {
+      "id": "end_linkedin",
+      "type": "end",
+      "label": "End: LinkedIn",
+      "x": 840,
+      "y": 500,
+      "purposeInstructions": "LinkedIn weekly track ended.\n\n§4.7 pattern: this end is independent of the Twitter / Newsletter / Blog chains. The LinkedIn chain did not block on, share content with, or rely on the other chains during this cycle. Coordination across platforms happens OFF-CANVAS in the brand strategy review (typically quarterly), not through in-workflow edges."
+    },
+
+    {
+      "id": "start_newsletter",
+      "type": "start",
+      "label": "Start: Newsletter",
+      "x": 120,
+      "y": 800,
+      "purposeInstructions": "Newsletter Lead. Initiate the bi-weekly newsletter track for paid subscribers.\n\nOutput a one-paragraph kickoff brief covering:\n- Audience: ~1,500 paid subscribers, mostly mid-senior practitioners and executives who paid for depth. They expect 1500–3000 word issues with original analysis they cannot get on LinkedIn or Twitter.\n- Cadence: bi-weekly, every other Thursday morning ET (consistency is what subscribers paid for; one missed week erodes renewal).\n- Voice: long-form analytical. More careful than LinkedIn, more structured than the blog. The reader has paid; they expect insight, not recycled tweet threads or reformatted LinkedIn posts.\n- Strategic intent: retain paid subscribers (renewal rate target >85%) AND seed long-tail revenue (workshop/consulting inquiries). The newsletter is the brand's REVENUE-SUSTAINING channel.\n- Win condition: open rate >50% (the industry benchmark for paid lists is ~40%, and we beat that), click-through rate >12%, churn <1% per issue.\n\nIndependence note (§4.7 discipline): this chain has its own bi-weekly cadence with its own editorial process and its own quality gate (nl_review wait node). Per §4.7, no edges to/from Twitter / LinkedIn / Blog; cross-pollination of ideas off-canvas only.\n\nThis brief seeds nl_curate."
+    },
+    {
+      "id": "nl_curate",
+      "type": "generic",
+      "label": "Curate Topics",
+      "x": 300,
+      "y": 800,
+      "purposeInstructions": "Curation phase (week 1 of the bi-weekly cycle).\n\nTasks:\n- Pull the past two weeks' most interesting findings from your research log, conversations, and reading.\n- Categorize into: deep dive (the issue's main piece, ~70% of the issue's word count), runner-up topics (held for future issues), and link-collection (3–5 best links with annotations, ~20% of the issue).\n- Draft the deep-dive's thesis in 3 sentences. If you can't, the topic isn't ready — pull it back into the runner-up bucket and pick a different deep-dive candidate. Sub-baked deep-dives are the #1 cause of weak issues.\n- Identify the issue's 'so-what' — the practitioner takeaway. Subscribers will tolerate dense analysis only if there's a payoff.\n\nOutput: the issue's outline + thesis + link section + so-what statement. Hand to nl_write."
+    },
+    {
+      "id": "nl_write",
+      "type": "generic",
+      "label": "Write Issue",
+      "x": 480,
+      "y": 800,
+      "purposeInstructions": "Drafting phase (week 1–2 of the bi-weekly cycle).\n\nStructure:\n- Open: a short personal-or-anecdotal hook (≤150 words). Establishes voice and earns the next 1500 words.\n- The main piece (1500–2500 words): structured argument with explicit subheads. The reader should be able to skim subheads and follow the spine of the argument; full read should reward the depth.\n- Examples: 2–4 specific cases, each with enough detail to verify and enough analysis to extract a generalizable lesson.\n- Reflection / what-this-means / what-to-do: 200–400 words of practical implication for the practitioner reader. This is the section that justifies the subscription price.\n- Link section: 3–5 best links with 1–2 sentence annotations each.\n\nQuality bar (uphold these or pull the issue back to nl_curate):\n- No filler. Every paragraph earns its space.\n- No claim without an example or evidence link.\n- No 'AI is changing everything' platitudes — paid subscribers paid to escape that drivel.\n\nOutput: the draft issue. Hand to nl_review (the editorial wait gate)."
+    },
+    {
+      "id": "nl_review",
+      "type": "wait",
+      "label": "Wait: Editorial OK",
+      "x": 660,
+      "y": 800,
+      "purposeInstructions": "Editorial review — wait gate immediately before the irreversible send action.\n\nThe workflow stops here until the editor (or a trusted reader, or you-as-fresh-eyes after a 24-hour cooling period) reviews and signs off on the issue. Why a wait gate, and why HERE specifically:\n- Newsletters are deliverables paid for by subscribers; quality lapses degrade subscription value AND retention.\n- Once sent, you cannot retract. A bad issue arrives in 1500+ inboxes and stays in their archive forever.\n- The 24-hour cooling-off rule is the strongest editorial protection a small newsletter can implement at near-zero cost. It catches misreads and overreaches that fresh-eyes-on-the-day will miss.\n\nSign-off checklist (the reviewer must affirm each):\n- Thesis is clear by paragraph 3.\n- Examples are accurate (verify any quoted company name, number, claim — this is where reputation is won or lost).\n- No personal-vendetta-flavored prose accidentally publishable.\n- Subscriber-perspective gut check: 'would a paying reader feel they got their $X this issue?'\n\nIf revisions needed: route back to nl_write OUTSIDE this workflow (no auto-loop edge). If approved: hand to nl_send.\n\nPer §4.6 + §10 user prefs ('wait at every approval/sign-off')."
+    },
+    {
+      "id": "nl_send",
+      "type": "generic",
+      "label": "Send Newsletter",
+      "x": 840,
+      "y": 800,
+      "purposeInstructions": "Send the newsletter via the mailing platform.\n\nPre-send checklist:\n- Subject line tested against 1–2 alternatives (split test if your tool supports; otherwise pick by gut after a 1-hour cooling period).\n- Preview text is intentional, not auto-generated from the first sentence.\n- Sender reputation status checked (not on any blacklists; SPF/DKIM/DMARC current).\n- All links resolve (broken links = lost trust + algorithmic penalty for spam-like behavior).\n- Unsubscribe and preferences links work.\n- Mobile preview rendered acceptably (>60% of opens are mobile).\n\nSend at the scheduled time (Thursday 7–8am ET typically performs best for the executive-leaning audience).\n\nPost-send:\n- Monitor open rate at +1h, +6h, +24h. Note the curve — flat = subject line miss, steep = subject line hit.\n- Reply to substantive responses within 24 hours — high-value subscribers expect engagement and the dialogue is itself product.\n- Save the post-send retro into a rolling notes doc for nl_curate's next cycle.\n\nOutput: issue shipped, performance baseline noted, retro captured. Hand to end_newsletter."
+    },
+    {
+      "id": "end_newsletter",
+      "type": "end",
+      "label": "End: Newsletter",
+      "x": 1020,
+      "y": 800,
+      "purposeInstructions": "Newsletter bi-weekly cycle ended.\n\n§4.7 pattern: this end is independent of the Twitter / LinkedIn / Blog chains. Each platform shipped on its own cadence with its own quality bar. No in-workflow merging across platforms — coordination happens off-canvas in brand strategy review."
+    },
+
+    {
+      "id": "start_blog",
+      "type": "start",
+      "label": "Start: Blog",
+      "x": 120,
+      "y": 1100,
+      "purposeInstructions": "Blog Lead. Initiate the monthly blog/long-form track on the personal/research site.\n\nOutput a one-paragraph kickoff brief covering:\n- Audience: organic-search visitors (the SEO majority) AND a smaller cohort of devoted regulars. The latter group reads anything; the former finds you via search and has 30 seconds to decide if you're worth their time.\n- Cadence: 1 deep-dive pillar post per month, 3000–6000 words. This is the brand's INTELLECTUAL DURABLE RECORD — pillar posts the other channels can point to for depth.\n- Voice: research-grade. Citations, careful argument, evidence-driven. The blog is the brand's most rigorous channel; sloppy posts here erode the credibility the other channels rely on.\n- Strategic intent: SEO + intellectual brand-building. The long tail. A pillar post that ranks top-10 for a competitive query compounds for years.\n- Win condition: 1–2 pillar posts per quarter rank in top-10 for a competitive query within 6 months of publication; >10K page views per pillar post over its lifetime.\n\nIndependence note (§4.7 discipline): this chain runs its own monthly cadence with its own peer-review process. Per §4.7 isolation; cross-pollination off-canvas only — if a blog post incorporates insights from earlier newsletter issues or LinkedIn discussions, that incorporation is a brand-strategy choice between cycles, never an in-workflow edge.\n\nThis brief seeds b_pillar_select."
+    },
+    {
+      "id": "b_pillar_select",
+      "type": "generic",
+      "label": "Pillar Topic",
+      "x": 300,
+      "y": 1100,
+      "purposeInstructions": "Pick the month's pillar topic.\n\nSelection criteria (the topic must satisfy ALL THREE):\n- Search intent: identifies a genuine query the audience runs (verify via search-volume tools), and current top results aren't fully serving it (a SERP gap exists).\n- Authority advantage: the brand has unique experience, data, or position to write something competitive ranks can't replicate. Without authority advantage, you're competing for a crumb.\n- Durability: the topic remains relevant for 12+ months. Avoid fast-decaying news angles — those go to LinkedIn or Twitter, not the blog.\n\nOutput: pillar topic + draft target query (the specific search query you're trying to rank for) + working title. Hand to b_outline."
+    },
+    {
+      "id": "b_outline",
+      "type": "generic",
+      "label": "Detailed Outline",
+      "x": 480,
+      "y": 1100,
+      "purposeInstructions": "Detailed outline.\n\nTasks:\n- SERP audit: read the current top 5 results in detail. What does each cover? What does NONE cover well? Where is the SERP weakest?\n- Outline gap-driven sections: structure your post to cover what the top results miss. This is what gives the post a chance to rank.\n- Each section gets a 1-paragraph summary of what it'll argue + what evidence supports.\n- Identify 5–10 supporting sources you'll cite (peer-reviewed where available, named-company sources where credible).\n- Identify 2–3 ORIGINAL ARTIFACTS the post will produce (a framework, a chart, a process diagram). Originals are what differentiate from competitors who only synthesize.\n\nOutput: outline + source list + artifact plan. Hand to b_draft."
+    },
+    {
+      "id": "b_draft",
+      "type": "generic",
+      "label": "Pillar Draft",
+      "x": 660,
+      "y": 1100,
+      "purposeInstructions": "Draft the pillar post.\n\nStructure:\n- Title that names the deliverable: 'Why X Stops Working After Y Months: A Practitioner's Diagnostic' is better than 'Some Thoughts on X' — the title pre-sells the value.\n- Lede (100–200 words): earn the next 5000.\n- Body: section-by-section per outline. Long sections get sub-headers for skimmability.\n- Original artifacts inline: charts, diagrams, frameworks. These are what differentiate from competitors and are why people link to the post (which feeds the SEO loop).\n- Conclusion / what-now (200–400 words): what the reader should DO with this. Posts without a what-now feel academic.\n- 'Further reading' section with annotated links.\n\nQuality bar:\n- Every claim has a source or original argument backing it.\n- Every chart has a clear takeaway, not just data display.\n- No abandoned threads — every concept introduced is tied off in the post or in the further-reading section.\n\nOutput: draft post + a list of any unresolved research questions (raised but not fully answered — these are runner-ups for next month's pillar). Hand to b_review."
+    },
+    {
+      "id": "b_review",
+      "type": "generic",
+      "label": "Peer Review",
+      "x": 840,
+      "y": 1100,
+      "purposeInstructions": "Peer / editorial review.\n\nNote on primitive choice: this is a `generic` (a step DONE BY an agent — the peer reviewer), NOT a `wait` gate. Pedagogical contrast with the newsletter chain's nl_review (which IS a wait): both are 'review' steps, but they model the activity differently. nl_review represents 'workflow stops until human approval'; b_review represents 'an agent (peer reviewer) does review work and produces feedback.' Two legitimate ways to model 'review' — pick by whether the activity is fundamentally a stop-gate (wait) or a working step (generic).\n\nSend the draft to 1–2 trusted reviewers (ideally a peer practitioner + an adjacent-domain expert). Standard review window: 5–7 days.\n\nFeedback to act on:\n- Argument-level: where is the chain weak? Where do I rely on assumed shared context that the SEO-search reader won't have?\n- Evidence-level: which claims need stronger support? Where does the post over-claim?\n- Reader-level: where does a knowledgeable-but-not-expert reader get lost? Mark places where the prose density spikes.\n- Original-artifact-level: are the charts/diagrams/frameworks legible AND defensible? Could a critic dismantle them?\n\nApply revisions. For peer-review-style feedback that requires new analysis or research, do that work — do not hand-wave. Pillar posts that pass peer review with hand-waved revisions become long-term embarrassments.\n\nOutput: revised draft ready for publication. Hand to b_publish."
+    },
+    {
+      "id": "b_publish",
+      "type": "generic",
+      "label": "Publish Pillar",
+      "x": 1020,
+      "y": 1100,
+      "purposeInstructions": "Publish to the personal/research site.\n\nPre-publish checklist:\n- Schema markup (Article, with author, datePublished, image, wordCount).\n- OpenGraph and Twitter Card tags configured for sharing previews.\n- Internal links to relevant prior posts (these compound SEO over time); outbound links to authoritative sources (these signal you've done research, not just speculated).\n- Image optimization (WebP with PNG fallback; alt text on every meaningful image).\n- Page speed check (Lighthouse Performance ≥ 90; otherwise SEO suffers).\n- Mobile readability check (no horizontal overflow; comfortable reading width; sufficient font size).\n- Index settings correct (allow indexing for evergreen pillars; disallow for thin or private content).\n\nPost-publish:\n- Submit to Google Search Console.\n- Share on the brand's other channels (NOT auto-cross-post — adapt the share for each platform's conventions; auto-cross-post is an anti-§4.7 act in spirit).\n- 30-day SEO check: rank position for the target query, click-through rate from search, dwell time, scroll depth.\n- 90-day SEO check: rank trajectory, backlink acquisition, query-intent match.\n\nOutput: published pillar + initial SEO performance baseline + 90-day calendar marker for the SEO follow-up review. Hand to end_blog."
+    },
+    {
+      "id": "end_blog",
+      "type": "end",
+      "label": "End: Blog",
+      "x": 1200,
+      "y": 1100,
+      "purposeInstructions": "Blog monthly track ended.\n\n§4.7 pattern: this end is independent of the Twitter / LinkedIn / Newsletter chains. The blog shipped its monthly pillar on its own cadence with its own peer-review process. No in-workflow merging with the other three platform chains.\n\nMaturation note: if the four platform chains in this file ever grow rich enough to warrant their own JSON files, this workflow would naturally split into four separate JSONs (one per platform) and a higher-level 'brand strategy' workflow that composes them as `subflow` nodes (see subflow-composition_course-launch.json for that pattern). The progression — separate islands → separate files → unified subflow graph — is a maturation path multi-platform brands often follow."
+    }
+  ],
+  "connections": [
+    { "from": "start_twitter",     "fromPort": 1, "to": "t_calendar_setup", "toPort": 1 },
+    { "from": "t_calendar_setup",  "fromPort": 1, "to": "t_daily_loop",     "toPort": 1 },
+    { "from": "t_daily_loop",      "fromPort": 2, "to": "end_twitter",      "toPort": 1 },
+
+    { "from": "start_linkedin",    "fromPort": 1, "to": "li_research",      "toPort": 1 },
+    { "from": "li_research",       "fromPort": 1, "to": "li_draft",         "toPort": 1 },
+    { "from": "li_draft",          "fromPort": 1, "to": "li_publish",       "toPort": 1 },
+    { "from": "li_publish",        "fromPort": 1, "to": "end_linkedin",     "toPort": 1 },
+
+    { "from": "start_newsletter",  "fromPort": 1, "to": "nl_curate",        "toPort": 1 },
+    { "from": "nl_curate",         "fromPort": 1, "to": "nl_write",         "toPort": 1 },
+    { "from": "nl_write",          "fromPort": 1, "to": "nl_review",        "toPort": 1 },
+    { "from": "nl_review",         "fromPort": 1, "to": "nl_send",          "toPort": 1 },
+    { "from": "nl_send",           "fromPort": 1, "to": "end_newsletter",   "toPort": 1 },
+
+    { "from": "start_blog",        "fromPort": 1, "to": "b_pillar_select",  "toPort": 1 },
+    { "from": "b_pillar_select",   "fromPort": 1, "to": "b_outline",        "toPort": 1 },
+    { "from": "b_outline",         "fromPort": 1, "to": "b_draft",          "toPort": 1 },
+    { "from": "b_draft",           "fromPort": 1, "to": "b_review",         "toPort": 1 },
+    { "from": "b_review",          "fromPort": 1, "to": "b_publish",        "toPort": 1 },
+    { "from": "b_publish",         "fromPort": 1, "to": "end_blog",         "toPort": 1 }
+  ]
+}

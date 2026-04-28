@@ -1,0 +1,371 @@
+{
+  "name": "Greenwashing — Literature Review Pipeline",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Greenwashing concept (cross-disciplinary literature review)",
+    "phases": [
+      "P0 Scoping & Protocol",
+      "P1 Multi-Database Search (parallel)",
+      "P2 Screening (with loops)",
+      "P3 Extraction & Coding (parallel by dimension)",
+      "P4 Synthesis (parallel by theme)",
+      "P5 Drafting (parallel by section)",
+      "P6 Review (parallel by angle)",
+      "P7 Revision Loop (iterative)",
+      "P8 Finalize & Submit"
+    ],
+    "independentBranchPoints": [
+      {
+        "after": "p1_fan",
+        "branches": ["p1_wos", "p1_scopus", "p1_scholar", "p1_ebsco", "p1_jstor", "p1_ssrn", "p1_cite"],
+        "note": "Database searches are fully independent — assign one sub-agent per source. They converge at p1_merge for dedupe."
+      },
+      {
+        "after": "p3_fan",
+        "branches": ["p3_biblio", "p3_definitions", "p3_theory", "p3_methods", "p3_findings", "p3_constructs"],
+        "note": "Each extraction agent reads ALL included papers but extracts ONE dimension. Independent and parallelizable."
+      },
+      {
+        "after": "p4_fan",
+        "branches": ["p4_def", "p4_theory", "p4_methods", "p4_antecedents", "p4_consequences", "p4_gaps"],
+        "note": "Synthesis themes are independent. Each agent consumes the master evidence table."
+      },
+      {
+        "after": "p5_fan",
+        "branches": ["p5_intro", "p5_methods", "p5_results_def", "p5_results_theory", "p5_results_findings", "p5_discussion"],
+        "note": "Manuscript sections can be drafted in parallel. Final assembly happens at p5_assemble."
+      },
+      {
+        "after": "p6_fan",
+        "branches": ["p6_method_review", "p6_theory_review", "p6_writing_review", "p6_citation_review", "p6_originality"],
+        "note": "Review angles are independent. Compile feedback at p6_compile before revision loop."
+      }
+    ],
+    "iterativeLoops": [
+      { "node": "p2_ta_screen", "iteratesOver": "every deduplicated record", "exitWhen": "all records title/abstract-screened" },
+      { "node": "p2_ft_screen", "iteratesOver": "every TA-passing full text", "exitWhen": "all full texts screened" },
+      { "node": "p7_revise",    "iteratesOver": "revision rounds",          "exitWhen": "must-fixes resolved OR max 4 rounds" }
+    ],
+    "humanInTheLoop": ["p4_advisor"],
+    "totalNodes": 66,
+    "totalConnections": 91
+  },
+  "nodes": [
+    { "id": "start", "type": "start", "label": "Kick-off", "x": 80, "y": 500,
+      "purposeInstructions": "Initiate the greenwashing literature review.\n\nScope: cross-disciplinary (marketing, management, sustainability, finance, law). Author: the user. Output target: a synthesis review article suitable for a peer-reviewed journal (target outlet TBD)." },
+
+    { "id": "p0_rq", "type": "generic", "label": "Define RQs", "x": 260, "y": 500,
+      "purposeInstructions": "Research Question Definition Agent.\n\nDecide 1–3 focal RQs and their rationale. Candidate RQs:\n- How has the greenwashing concept been defined and operationalized across disciplines?\n- What are the antecedents, mechanisms, and consequences of greenwashing?\n- Which methodological approaches dominate and what are the gaps?\n\nOutput: 1–3 RQs, each with scope statement and exclusion notes." },
+
+    { "id": "p0_criteria", "type": "generic", "label": "Inclusion criteria", "x": 440, "y": 500,
+      "purposeInstructions": "Inclusion / Exclusion Criteria Agent.\n\nSpecify: time window (e.g., 1990–present); language (English unless multilingual review); peer-reviewed only or include grey/working papers; disciplines; study types (empirical only, or include theoretical/conceptual); unit of analysis (firm, claim, product, fund).\n\nOutput: criteria document, versioned." },
+
+    { "id": "p0_strategy", "type": "generic", "label": "Search strategy", "x": 620, "y": 500,
+      "purposeInstructions": "Search Strategy Agent.\n\nBuild the search-string library: keyword sets ('greenwashing' OR 'green-washing' OR 'green washing' OR 'greenwash*'); related terms (sustainability claim*, eco-label*, ESG misrepresentation, environmental disclosure); Boolean operators; field limits; per-database syntax (Scopus TITLE-ABS-KEY, WoS TS=, etc.).\n\nPilot the strings on 1–2 databases first; adjust precision/recall.\n\nOutput: search-string spec table." },
+
+    { "id": "p0_register", "type": "generic", "label": "Protocol doc", "x": 800, "y": 500,
+      "purposeInstructions": "Protocol Documentation Agent.\n\nEven if not formally registered (PROSPERO, OSF), document the full protocol: RQs, criteria, search strategy, screening rules, extraction template, synthesis approach, IRR plan.\n\nFreeze the protocol BEFORE starting searches — changes after this point should be tracked as deviations.\n\nOutput: protocol.md (versioned, in the project repo)." },
+
+    { "id": "p1_fan", "type": "parallel", "label": "P1 · Search fan-out", "x": 980, "y": 500,
+      "purposeInstructions": "Run searches in parallel across 7 sources. Each is independent and can be delegated to its own sub-agent.\n\nAll branches converge at p1_merge for deduplication." },
+
+    { "id": "p1_wos", "type": "generic", "label": "Web of Science", "x": 1160, "y": 200,
+      "purposeInstructions": "Web of Science Search Agent.\n\nApply the search strings from p0_strategy. Document: query string, date searched, hit count, filters applied. Export records (RIS or BibTeX).\n\nOutput: wos_records.ris + wos_query.log." },
+
+    { "id": "p1_scopus", "type": "generic", "label": "Scopus", "x": 1160, "y": 300,
+      "purposeInstructions": "Scopus Search Agent.\n\nSame protocol as Web of Science, with Scopus-native syntax. Often the broadest single source for management/marketing.\n\nOutput: scopus_records.ris + scopus_query.log." },
+
+    { "id": "p1_scholar", "type": "generic", "label": "Google Scholar", "x": 1160, "y": 400,
+      "purposeInstructions": "Google Scholar Search Agent.\n\nUse Publish-or-Perish or scholarly to extract ≤ 1000 records. Caveat: low precision, high recall — expect heavier deduplication.\n\nOutput: gs_records.ris + gs_query.log." },
+
+    { "id": "p1_ebsco", "type": "generic", "label": "EBSCO Business", "x": 1160, "y": 500,
+      "purposeInstructions": "EBSCO Business Source Complete Search Agent.\n\nParticularly relevant for marketing and management greenwashing literature; captures sources WoS / Scopus may miss.\n\nOutput: ebsco_records.ris + ebsco_query.log." },
+
+    { "id": "p1_jstor", "type": "generic", "label": "JSTOR", "x": 1160, "y": 600,
+      "purposeInstructions": "JSTOR Search Agent.\n\nUseful for older/foundational papers and humanities/policy framings of greenwashing.\n\nOutput: jstor_records.ris + jstor_query.log." },
+
+    { "id": "p1_ssrn", "type": "generic", "label": "SSRN · preprints", "x": 1160, "y": 700,
+      "purposeInstructions": "SSRN / Preprint Search Agent.\n\nCaptures working papers and recent finance/ESG greenwashing work that hasn't yet appeared in journals. Also check OSF, SocArXiv, ResearchGate (with caution).\n\nOutput: ssrn_records.ris + preprint sources log." },
+
+    { "id": "p1_cite", "type": "generic", "label": "Citation tracing", "x": 1160, "y": 800,
+      "purposeInstructions": "Citation Tracking Agent.\n\nSeed papers (must include): Lyon & Maxwell (2011, JEMS); Delmas & Burbano (2011, CMR); TerraChoice 'Seven Sins'; Bowen (2014); Lyon & Montgomery (2015 review). Also recent reviews.\n\nForward tracing: who cites these seeds? Backward tracing: what do these seeds cite?\n\nOutput: citation-traced records, flagged with seed source." },
+
+    { "id": "p1_merge", "type": "merge", "label": "Merge sources", "x": 1340, "y": 500,
+      "purposeInstructions": "Source Merge Agent. Combine all 7 source streams into one library. No filtering yet — just union with provenance tags." },
+
+    { "id": "p1_dedupe", "type": "generic", "label": "Deduplicate", "x": 1520, "y": 500,
+      "purposeInstructions": "Deduplication Agent.\n\nDedupe by DOI first; then by title+year fuzzy match (Levenshtein ≤ 3 on normalized title). Resolve conflicts: prefer published over preprint; prefer journal version over conference; keep the version with more metadata.\n\nOutput: deduplicated_corpus.ris + dedup_log.csv." },
+
+    { "id": "p2_import", "type": "generic", "label": "Import to manager", "x": 1700, "y": 500,
+      "purposeInstructions": "Reference Manager Import Agent.\n\nLoad deduplicated corpus into Zotero / Rayyan / Covidence. Set up tag taxonomy (include / exclude / maybe; reason codes; theme tags).\n\nOutput: project library ready for screening." },
+
+    { "id": "p2_ta_screen", "type": "loop", "label": "TA screen (loop)", "x": 1880, "y": 500,
+      "purposeInstructions": "Title-Abstract Screening Agent (iterates over every record).\n\nApply inclusion/exclusion criteria from p0_criteria using ONLY title and abstract. Mark each record include / exclude / maybe with a reason code.\n\nIf using AI-assisted screening (e.g., Rayyan ranking), still hand-review borderline cases.",
+      "loopDefinition": "For each deduplicated record: read title + abstract → apply criteria → assign label + reason code → record decision.",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "All deduplicated records have a TA-screening decision" },
+        { "text": "Inter-rater check (if multi-coder) shows kappa ≥ 0.7" }
+      ] },
+
+    { "id": "p2_ft_retrieve", "type": "generic", "label": "Full-text retrieve", "x": 2060, "y": 500,
+      "purposeInstructions": "Full-Text Retrieval Agent.\n\nFor TA-passing records (include + maybe), retrieve full PDFs. Use library subscriptions, ILL, author requests, ResearchGate as fallback.\n\nFlag unavailable items — if material to the corpus, escalate.\n\nOutput: full-text PDFs + retrieval log + 'unavailable' list." },
+
+    { "id": "p2_ft_screen", "type": "loop", "label": "FT screen (loop)", "x": 2240, "y": 500,
+      "purposeInstructions": "Full-Text Screening Agent (iterates over retrieved full texts).\n\nApply criteria to full text. Mark final include / exclude with detailed reason. Only the final 'include' set proceeds to extraction.",
+      "loopDefinition": "For each retrieved full text: skim methods + key sections → verify criteria match → final include/exclude with reason.",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "All retrieved full texts have a final-screening decision" }
+      ] },
+
+    { "id": "p2_irr", "type": "generic", "label": "IRR check", "x": 2420, "y": 500,
+      "purposeInstructions": "Inter-Rater Reliability Agent.\n\nIf multi-coder: sample 10–20% double-screened; compute Cohen's kappa or % agreement. Discuss disagreements; recalibrate criteria; re-screen if needed.\n\nIf solo coder: document the absence of IRR transparently in the methods section as a limitation.\n\nOutput: IRR report (or solo-coder methodological note)." },
+
+    { "id": "p2_corpus", "type": "generic", "label": "Final corpus", "x": 2600, "y": 500,
+      "purposeInstructions": "Final Corpus Agent.\n\nLock the included papers list. Build a PRISMA-style flow diagram: records identified → deduplicated → TA-screened → FT-retrieved → FT-screened → included.\n\nOutput: corpus.csv + prisma_flow.png." },
+
+    { "id": "p3_fan", "type": "parallel", "label": "P3 · Extraction fan-out", "x": 2780, "y": 500,
+      "purposeInstructions": "Extraction fan-out: 6 dimensions extracted in parallel.\n\nEach extraction agent reads EVERY included paper but extracts only ONE dimension. This is fully parallelizable across sub-agents." },
+
+    { "id": "p3_biblio", "type": "generic", "label": "Bibliometric", "x": 2960, "y": 200,
+      "purposeInstructions": "Bibliometric Extraction Agent.\n\nPer paper, extract: year, journal, journal discipline, authors, author affiliations, country/region of authors, country/region of data (if empirical), citation count (Scopus + GS), study type tag.\n\nOutput: biblio_table.csv." },
+
+    { "id": "p3_definitions", "type": "generic", "label": "Definitions", "x": 2960, "y": 320,
+      "purposeInstructions": "Definition Extraction Agent.\n\nPer paper, extract:\n- Verbatim definition(s) of greenwashing.\n- Cited definitional source(s) (Lyon & Maxwell, Delmas & Burbano, TerraChoice, Bowen, Walker & Wan, etc.).\n- Type of greenwashing addressed: firm-level / claim-level / product-level / executional / selective disclosure / decoupling / greenhushing.\n- Whether definition is original to the paper or imported.\n\nOutput: definition_table.csv." },
+
+    { "id": "p3_theory", "type": "generic", "label": "Theory", "x": 2960, "y": 440,
+      "purposeInstructions": "Theory Extraction Agent.\n\nPer paper, identify the theoretical lens(es) used: signaling theory, legitimacy theory, institutional theory, stakeholder theory, agency theory, information asymmetry, attribution theory, persuasion knowledge, etc.\n\nNote when paper is atheoretical or theory is implicit. Note theory combinations.\n\nOutput: theory_table.csv." },
+
+    { "id": "p3_methods", "type": "generic", "label": "Methods", "x": 2960, "y": 560,
+      "purposeInstructions": "Methods Extraction Agent.\n\nPer paper, extract: research design (experiment, archival, survey, content analysis, ethnography, mixed-methods, conceptual); sample (size, type, context); data sources; analytic approach (regression, SEM, DiD, qualitative coding, etc.); validity claims and threats addressed.\n\nOutput: methods_table.csv." },
+
+    { "id": "p3_findings", "type": "generic", "label": "Findings", "x": 2960, "y": 680,
+      "purposeInstructions": "Findings Extraction Agent.\n\nPer paper, extract key findings as discrete claims. For each claim: direction, magnitude (effect size if reported), context, moderators noted, p-value or CI.\n\nFlag null findings, unexpected directions, contradictions across studies.\n\nOutput: findings_table.csv (long format — one row per claim)." },
+
+    { "id": "p3_constructs", "type": "generic", "label": "Constructs", "x": 2960, "y": 800,
+      "purposeInstructions": "Constructs & Measurement Extraction Agent.\n\nPer paper, extract: constructs measured (greenwashing perception, skepticism, brand trust, purchase intent, financial performance, stock returns, etc.); how each is operationalized (validated scale, content-analysis dictionary, archival proxy); reliability/validity reported.\n\nOutput: constructs_table.csv." },
+
+    { "id": "p3_merge", "type": "merge", "label": "Extraction merge", "x": 3140, "y": 500,
+      "purposeInstructions": "Merge all 6 extraction tables on paper-ID. Validate completeness — every included paper appears in every dimension. Flag missing cells for follow-up." },
+
+    { "id": "p3_qa", "type": "generic", "label": "Coding QA", "x": 3320, "y": 500,
+      "purposeInstructions": "Coding QA Agent.\n\nDouble-code 10% of papers (random sample). Compute % agreement / kappa per dimension. Resolve coding-frame issues; update extraction dictionaries if recurring confusion.\n\nOutput: coding_qa_report.md." },
+
+    { "id": "p3_table", "type": "generic", "label": "Evidence table", "x": 3500, "y": 500,
+      "purposeInstructions": "Master Evidence Table Agent.\n\nWide-format table joining all extraction dimensions on paper-ID. This is the single source of truth for synthesis.\n\nOutput: evidence_table.xlsx (one sheet per dimension + a wide master sheet)." },
+
+    { "id": "p4_fan", "type": "parallel", "label": "P4 · Synthesis fan-out", "x": 3680, "y": 500,
+      "purposeInstructions": "Synthesize across 6 themes in parallel. Each synthesis agent reads the master evidence table from its angle." },
+
+    { "id": "p4_def", "type": "generic", "label": "Synth: definitions", "x": 3860, "y": 200,
+      "purposeInstructions": "Definitional Synthesis Agent.\n\nMap the typology of greenwashing definitions across the corpus. Identify clusters (e.g., communication-based vs performance-based; intentional vs unintentional; firm-level vs claim-level). Trace evolution over time. Note contemporary extensions: greenhushing, ESG/fund greenwashing, AI-generated greenwash.\n\nOutput: definitional_synthesis.md (3–4 pages) + typology figure draft." },
+
+    { "id": "p4_theory", "type": "generic", "label": "Synth: theory", "x": 3860, "y": 320,
+      "purposeInstructions": "Theoretical Synthesis Agent.\n\nIdentify dominant theoretical lenses. Note over- vs under-used theories. Surface integrative frameworks (e.g., Delmas & Burbano's greenwashing drivers framework). Suggest theoretical extensions or imports from adjacent literatures.\n\nOutput: theoretical_synthesis.md." },
+
+    { "id": "p4_methods", "type": "generic", "label": "Synth: methods", "x": 3860, "y": 440,
+      "purposeInstructions": "Methodological Synthesis Agent.\n\nInventory methods used (% experimental, % archival, % content analysis, etc.). Note dominant samples and contexts (e.g., consumer experiments in WEIRD populations; archival US-listed firms).\n\nIdentify methodological gaps: longitudinal studies, non-Western samples, qualitative depth, causal designs, replication.\n\nOutput: methods_synthesis.md." },
+
+    { "id": "p4_antecedents", "type": "generic", "label": "Synth: antecedents", "x": 3860, "y": 560,
+      "purposeInstructions": "Antecedents Synthesis Agent.\n\nWhat drives greenwashing? Aggregate evidence at:\n- Firm level (size, industry, prior performance, ownership, leadership)\n- Institutional level (regulation, scrutiny, certification regimes)\n- Individual level (manager incentives, narcissism, ethical climate)\n- Market level (consumer demand, competitor behavior)\n\nOutput: antecedents_map.md + figure draft." },
+
+    { "id": "p4_consequences", "type": "generic", "label": "Synth: consequences", "x": 3860, "y": 680,
+      "purposeInstructions": "Consequences Synthesis Agent.\n\nOutcomes of greenwashing across stakeholders:\n- Consumers (skepticism, trust, WTP, switching)\n- Firms (reputation, financial performance, stock returns, litigation)\n- Markets (industry-level spillovers, race-to-the-bottom)\n- Regulators / society (regulatory action, public trust in sustainability claims)\n\nOutput: consequences_map.md + figure draft." },
+
+    { "id": "p4_gaps", "type": "generic", "label": "Synth: gaps", "x": 3860, "y": 800,
+      "purposeInstructions": "Gaps & Future Research Agent.\n\nIdentify what the literature has NOT addressed: under-studied contexts (Global South, SMEs, B2B), theoretical lacunae, methodological weaknesses, emerging phenomena (greenhushing, AI-generated greenwash, ESG-fund greenwashing, finance-side disclosure misrepresentation, supply-chain claims).\n\nOutput: gap_list.md (each gap stated as: 'literature has X, but lacks Y, which matters because Z')." },
+
+    { "id": "p4_merge", "type": "merge", "label": "Synth merge", "x": 4040, "y": 500,
+      "purposeInstructions": "Converge synthesis themes. Cross-check for contradictions across themes (e.g., does the theory synthesis align with the antecedents synthesis?)." },
+
+    { "id": "p4_meta", "type": "generic", "label": "Meta-narrative", "x": 4220, "y": 500,
+      "purposeInstructions": "Meta-Narrative Agent.\n\nBuild the overarching arc the manuscript will tell:\n'Greenwashing literature has accomplished X across Y disciplines, but is missing Z; this review contributes by W.'\n\nOutput: meta_narrative.md + tentative thesis statement (1–2 sentences)." },
+
+    { "id": "p4_advisor", "type": "wait", "label": "Advisor review", "x": 4400, "y": 500,
+      "purposeInstructions": "Advisor / Co-Author Review Gate (human-in-the-loop).\n\nShare the master evidence table + 6 synthesis docs + meta-narrative with PI / co-authors. Hold for substantive feedback before drafting.\n\nCapture revisions to syntheses or meta-narrative; loop back to p4 if major rework needed (manual)." },
+
+    { "id": "p5_fan", "type": "parallel", "label": "P5 · Drafting fan-out", "x": 4580, "y": 500,
+      "purposeInstructions": "Draft 6 manuscript sections in parallel. Each section pulls from synthesis outputs." },
+
+    { "id": "p5_intro", "type": "generic", "label": "Intro", "x": 4760, "y": 200,
+      "purposeInstructions": "Introduction Drafter.\n\nStructure: hook → why greenwashing matters now (regulatory, market, ESG context) → what's known → what's missing → our contribution → roadmap.\n\nCite seminal papers (Lyon & Maxwell 2011; Delmas & Burbano 2011; Bowen 2014; recent reviews). Avoid throat-clearing.\n\nOutput: intro_draft.md (~1500 words)." },
+
+    { "id": "p5_methods", "type": "generic", "label": "Methods", "x": 4760, "y": 320,
+      "purposeInstructions": "Review-Methods Drafter.\n\nDocument the review protocol per PRISMA-style standards (or transparently note deviations): search strategy, databases, dates, inclusion/exclusion, screening process, IRR, extraction template, synthesis approach.\n\nInclude PRISMA flow diagram.\n\nOutput: methods_section.md." },
+
+    { "id": "p5_results_def", "type": "generic", "label": "Results: defs", "x": 4760, "y": 440,
+      "purposeInstructions": "Results — Definitions Drafter.\n\nTranslate the definitional synthesis into prose. Use a typology figure or table. Surface tensions across definitions and their consequences for downstream measurement.\n\nOutput: results_definitions.md." },
+
+    { "id": "p5_results_theory", "type": "generic", "label": "Results: theory", "x": 4760, "y": 560,
+      "purposeInstructions": "Results — Theories Drafter.\n\nNarrate the theoretical landscape. Show which theories appear where and why. Highlight under-used lenses (e.g., persuasion knowledge, attribution theory, dynamic capabilities).\n\nOutput: results_theory.md." },
+
+    { "id": "p5_results_findings", "type": "generic", "label": "Results: findings", "x": 4760, "y": 680,
+      "purposeInstructions": "Results — Findings Drafter.\n\nSynthesize the antecedents + consequences narratives with key empirical illustrations. Use a 2x2 or radial figure to organize.\n\nDo not list studies one by one; organize by claim and let evidence accrete around each claim.\n\nOutput: results_findings.md." },
+
+    { "id": "p5_discussion", "type": "generic", "label": "Discussion", "x": 4760, "y": 800,
+      "purposeInstructions": "Discussion Drafter.\n\nStructure: so-what for theory → so-what for practice/policy → future research agenda (drawn from p4_gaps) → limitations of the review itself → conclusion.\n\nOutput: discussion_section.md." },
+
+    { "id": "p5_merge", "type": "merge", "label": "Sections merge", "x": 4940, "y": 500,
+      "purposeInstructions": "Combine drafted sections. Cross-check that intro promises map to discussion delivery." },
+
+    { "id": "p5_assemble", "type": "generic", "label": "Assemble v0.1", "x": 5120, "y": 500,
+      "purposeInstructions": "Manuscript Assembler.\n\nStitch sections into a single document: front matter, abstract (write last), keywords, sections, references, figures, tables, appendices.\n\nRun a basic readability/length check vs target outlet word limits.\n\nOutput: manuscript_v0.1.docx + figures/ directory." },
+
+    { "id": "p6_fan", "type": "parallel", "label": "P6 · Review fan-out", "x": 5300, "y": 500,
+      "purposeInstructions": "Review the manuscript from 5 angles in parallel. Each reviewer is an independent agent." },
+
+    { "id": "p6_method_review", "type": "generic", "label": "Methods review", "x": 5480, "y": 240,
+      "purposeInstructions": "Methodological Reviewer.\n\nDid we follow systematic-review standards (or transparently document deviations)? PRISMA flow correct? Search reproducible? Screening and extraction documented? Sample size sufficient for synthesis claims?\n\nOutput: method_review_notes.md with severity-tagged issues." },
+
+    { "id": "p6_theory_review", "type": "generic", "label": "Theory review", "x": 5480, "y": 360,
+      "purposeInstructions": "Theoretical Contribution Reviewer.\n\nIs the theoretical contribution clearly stated, substantiated by evidence, and non-obvious? Does the meta-narrative deliver on the promised gap? Is the future-research agenda actionable?\n\nOutput: theory_review_notes.md." },
+
+    { "id": "p6_writing_review", "type": "generic", "label": "Writing review", "x": 5480, "y": 480,
+      "purposeInstructions": "Writing Reviewer.\n\nClarity, prose quality, transitions, jargon load, audience fit. Section-by-section line edits. Flag passive-voice abuse, hedging, and run-on sentences.\n\nOutput: tracked-changes file (manuscript_v0.1_writing.docx)." },
+
+    { "id": "p6_citation_review", "type": "generic", "label": "Citation review", "x": 5480, "y": 600,
+      "purposeInstructions": "Citation Reviewer.\n\nVerify: every claim has a citation; every citation matches its claim (no misattribution); reference list is complete and consistently formatted; DOIs validate; no broken citations.\n\nIMPORTANT: pay special attention to definitional attribution — greenwashing has many similar-but-distinct definitions, and misattribution is common.\n\nOutput: citation_review_report.md + corrected references.bib." },
+
+    { "id": "p6_originality", "type": "generic", "label": "Originality check", "x": 5480, "y": 720,
+      "purposeInstructions": "Originality Reviewer.\n\nRun plagiarism check (Turnitin / iThenticate). Run AI-detection per submission requirements. Verify no inadvertent self-plagiarism with prior author work.\n\nIMPORTANT: if any text passed through AI tools, strip markdown and verify natural prose before submitting to detectors.\n\nOutput: originality_report.md + flagged passages." },
+
+    { "id": "p6_merge", "type": "merge", "label": "Review merge", "x": 5660, "y": 500,
+      "purposeInstructions": "Merge all 5 review streams into one feedback set." },
+
+    { "id": "p6_compile", "type": "generic", "label": "Feedback compile", "x": 5840, "y": 500,
+      "purposeInstructions": "Feedback Compiler.\n\nAggregate all reviewer notes. Prioritize: must-fix vs should-fix vs nice-to-have. Group by section and assign to revision tasks.\n\nOutput: revision_priority_list.md." },
+
+    { "id": "p7_revise", "type": "loop", "label": "Revision (loop)", "x": 6020, "y": 500,
+      "purposeInstructions": "Revision Loop.\n\nIterate revision rounds: address feedback batch → re-draft affected sections → light self-review → update revision log.\n\nDo not aim for perfection in one pass — each iteration absorbs the highest-priority feedback first. Stop when must-fixes are resolved or revision budget exhausted.",
+      "loopDefinition": "For each revision round: pick top-priority feedback batch (per p6_compile) → address by editing sections → light self-critique → commit version (manuscript_v0.X.docx).",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "All must-fix items resolved AND co-author/PI green-light" },
+        { "text": "Maximum 4 revision rounds reached" },
+        { "text": "Hard deadline reached (regardless of state)" }
+      ] },
+
+    { "id": "p8_proof", "type": "generic", "label": "Final proof", "x": 6200, "y": 500,
+      "purposeInstructions": "Final Proofread Agent.\n\nFull-manuscript pass: typos, grammar, citation matches, figure/table labels and captions, cross-references, consistency of terminology.\n\nOutput: clean manuscript ready for formatting." },
+
+    { "id": "p8_format", "type": "generic", "label": "Format for outlet", "x": 6380, "y": 500,
+      "purposeInstructions": "Outlet Formatting Agent.\n\nApply target journal's style (e.g., AMJ, JOM, JBE, Org & Env, JCR, Sustainability, JCP). Word count, reference style, structured abstract if required, figure/table format, supplementary materials.\n\nOutput: outlet-formatted manuscript + cover letter draft." },
+
+    { "id": "p8_branch", "type": "branch", "label": "Outlet path?", "x": 6560, "y": 500,
+      "purposeInstructions": "Branch decision: deposit pre-print first, or go straight to journal?\n\nOutput 1 (top): preprint path (recommended for visibility, especially if outlet allows it).\nOutput 2 (bottom): direct-to-journal path (for outlets that disallow preprints, or when blind review confidentiality is preferred)." },
+
+    { "id": "p8_preprint", "type": "generic", "label": "Preprint deposit", "x": 6740, "y": 400,
+      "purposeInstructions": "Preprint Deposit Agent.\n\nPost to SSRN / OSF / SocArXiv. Acquire DOI. Update CV / lab page / social with citation.\n\nOutput: preprint URL + DOI." },
+
+    { "id": "p8_journal", "type": "generic", "label": "Journal submit", "x": 6740, "y": 600,
+      "purposeInstructions": "Journal Submission Agent.\n\nSubmit through editorial system. Confirm submission. Track manuscript ID. Editorial decision is handled outside this workflow — expect a separate revision pipeline upon R&R.\n\nOutput: submission confirmation + manuscript ID." },
+
+    { "id": "p8_merge", "type": "merge", "label": "Submit merge", "x": 6920, "y": 500,
+      "purposeInstructions": "Both submission paths converge. The cycle is complete from a workflow perspective." },
+
+    { "id": "end", "type": "end", "label": "Submitted", "x": 7100, "y": 500,
+      "purposeInstructions": "Submission complete.\n\nNext: track for editorial decision; archive all artifacts (protocol, search logs, screening logs, evidence table, syntheses, drafts, review notes, revision logs) in a versioned project folder for reproducibility and future R&R rounds." }
+  ],
+  "connections": [
+    { "from": "start",       "fromPort": 1, "to": "p0_rq",        "toPort": 1 },
+    { "from": "p0_rq",       "fromPort": 1, "to": "p0_criteria",  "toPort": 1 },
+    { "from": "p0_criteria", "fromPort": 1, "to": "p0_strategy",  "toPort": 1 },
+    { "from": "p0_strategy", "fromPort": 1, "to": "p0_register",  "toPort": 1 },
+    { "from": "p0_register", "fromPort": 1, "to": "p1_fan",       "toPort": 1 },
+
+    { "from": "p1_fan", "fromPort": 1, "to": "p1_wos",     "toPort": 1 },
+    { "from": "p1_fan", "fromPort": 2, "to": "p1_scopus",  "toPort": 1 },
+    { "from": "p1_fan", "fromPort": 3, "to": "p1_scholar", "toPort": 1 },
+    { "from": "p1_fan", "fromPort": 4, "to": "p1_ebsco",   "toPort": 1 },
+    { "from": "p1_fan", "fromPort": 5, "to": "p1_jstor",   "toPort": 1 },
+    { "from": "p1_fan", "fromPort": 6, "to": "p1_ssrn",    "toPort": 1 },
+    { "from": "p1_fan", "fromPort": 7, "to": "p1_cite",    "toPort": 1 },
+    { "from": "p1_wos",     "fromPort": 1, "to": "p1_merge", "toPort": 1 },
+    { "from": "p1_scopus",  "fromPort": 1, "to": "p1_merge", "toPort": 2 },
+    { "from": "p1_scholar", "fromPort": 1, "to": "p1_merge", "toPort": 3 },
+    { "from": "p1_ebsco",   "fromPort": 1, "to": "p1_merge", "toPort": 4 },
+    { "from": "p1_jstor",   "fromPort": 1, "to": "p1_merge", "toPort": 5 },
+    { "from": "p1_ssrn",    "fromPort": 1, "to": "p1_merge", "toPort": 6 },
+    { "from": "p1_cite",    "fromPort": 1, "to": "p1_merge", "toPort": 7 },
+    { "from": "p1_merge",   "fromPort": 1, "to": "p1_dedupe", "toPort": 1 },
+    { "from": "p1_dedupe",  "fromPort": 1, "to": "p2_import", "toPort": 1 },
+
+    { "from": "p2_import",     "fromPort": 1, "to": "p2_ta_screen",   "toPort": 1 },
+    { "from": "p2_ta_screen",  "fromPort": 2, "to": "p2_ft_retrieve", "toPort": 1 },
+    { "from": "p2_ft_retrieve","fromPort": 1, "to": "p2_ft_screen",   "toPort": 1 },
+    { "from": "p2_ft_screen",  "fromPort": 2, "to": "p2_irr",         "toPort": 1 },
+    { "from": "p2_irr",        "fromPort": 1, "to": "p2_corpus",      "toPort": 1 },
+    { "from": "p2_corpus",     "fromPort": 1, "to": "p3_fan",         "toPort": 1 },
+
+    { "from": "p3_fan", "fromPort": 1, "to": "p3_biblio",      "toPort": 1 },
+    { "from": "p3_fan", "fromPort": 2, "to": "p3_definitions", "toPort": 1 },
+    { "from": "p3_fan", "fromPort": 3, "to": "p3_theory",      "toPort": 1 },
+    { "from": "p3_fan", "fromPort": 4, "to": "p3_methods",     "toPort": 1 },
+    { "from": "p3_fan", "fromPort": 5, "to": "p3_findings",    "toPort": 1 },
+    { "from": "p3_fan", "fromPort": 6, "to": "p3_constructs",  "toPort": 1 },
+    { "from": "p3_biblio",      "fromPort": 1, "to": "p3_merge", "toPort": 1 },
+    { "from": "p3_definitions", "fromPort": 1, "to": "p3_merge", "toPort": 2 },
+    { "from": "p3_theory",      "fromPort": 1, "to": "p3_merge", "toPort": 3 },
+    { "from": "p3_methods",     "fromPort": 1, "to": "p3_merge", "toPort": 4 },
+    { "from": "p3_findings",    "fromPort": 1, "to": "p3_merge", "toPort": 5 },
+    { "from": "p3_constructs",  "fromPort": 1, "to": "p3_merge", "toPort": 6 },
+    { "from": "p3_merge", "fromPort": 1, "to": "p3_qa",    "toPort": 1 },
+    { "from": "p3_qa",    "fromPort": 1, "to": "p3_table", "toPort": 1 },
+    { "from": "p3_table", "fromPort": 1, "to": "p4_fan",   "toPort": 1 },
+
+    { "from": "p4_fan", "fromPort": 1, "to": "p4_def",          "toPort": 1 },
+    { "from": "p4_fan", "fromPort": 2, "to": "p4_theory",       "toPort": 1 },
+    { "from": "p4_fan", "fromPort": 3, "to": "p4_methods",      "toPort": 1 },
+    { "from": "p4_fan", "fromPort": 4, "to": "p4_antecedents",  "toPort": 1 },
+    { "from": "p4_fan", "fromPort": 5, "to": "p4_consequences", "toPort": 1 },
+    { "from": "p4_fan", "fromPort": 6, "to": "p4_gaps",         "toPort": 1 },
+    { "from": "p4_def",          "fromPort": 1, "to": "p4_merge", "toPort": 1 },
+    { "from": "p4_theory",       "fromPort": 1, "to": "p4_merge", "toPort": 2 },
+    { "from": "p4_methods",      "fromPort": 1, "to": "p4_merge", "toPort": 3 },
+    { "from": "p4_antecedents",  "fromPort": 1, "to": "p4_merge", "toPort": 4 },
+    { "from": "p4_consequences", "fromPort": 1, "to": "p4_merge", "toPort": 5 },
+    { "from": "p4_gaps",         "fromPort": 1, "to": "p4_merge", "toPort": 6 },
+    { "from": "p4_merge",   "fromPort": 1, "to": "p4_meta",    "toPort": 1 },
+    { "from": "p4_meta",    "fromPort": 1, "to": "p4_advisor", "toPort": 1 },
+    { "from": "p4_advisor", "fromPort": 1, "to": "p5_fan",     "toPort": 1 },
+
+    { "from": "p5_fan", "fromPort": 1, "to": "p5_intro",            "toPort": 1 },
+    { "from": "p5_fan", "fromPort": 2, "to": "p5_methods",          "toPort": 1 },
+    { "from": "p5_fan", "fromPort": 3, "to": "p5_results_def",      "toPort": 1 },
+    { "from": "p5_fan", "fromPort": 4, "to": "p5_results_theory",   "toPort": 1 },
+    { "from": "p5_fan", "fromPort": 5, "to": "p5_results_findings", "toPort": 1 },
+    { "from": "p5_fan", "fromPort": 6, "to": "p5_discussion",       "toPort": 1 },
+    { "from": "p5_intro",            "fromPort": 1, "to": "p5_merge", "toPort": 1 },
+    { "from": "p5_methods",          "fromPort": 1, "to": "p5_merge", "toPort": 2 },
+    { "from": "p5_results_def",      "fromPort": 1, "to": "p5_merge", "toPort": 3 },
+    { "from": "p5_results_theory",   "fromPort": 1, "to": "p5_merge", "toPort": 4 },
+    { "from": "p5_results_findings", "fromPort": 1, "to": "p5_merge", "toPort": 5 },
+    { "from": "p5_discussion",       "fromPort": 1, "to": "p5_merge", "toPort": 6 },
+    { "from": "p5_merge",    "fromPort": 1, "to": "p5_assemble", "toPort": 1 },
+    { "from": "p5_assemble", "fromPort": 1, "to": "p6_fan",      "toPort": 1 },
+
+    { "from": "p6_fan", "fromPort": 1, "to": "p6_method_review",   "toPort": 1 },
+    { "from": "p6_fan", "fromPort": 2, "to": "p6_theory_review",   "toPort": 1 },
+    { "from": "p6_fan", "fromPort": 3, "to": "p6_writing_review",  "toPort": 1 },
+    { "from": "p6_fan", "fromPort": 4, "to": "p6_citation_review", "toPort": 1 },
+    { "from": "p6_fan", "fromPort": 5, "to": "p6_originality",     "toPort": 1 },
+    { "from": "p6_method_review",   "fromPort": 1, "to": "p6_merge", "toPort": 1 },
+    { "from": "p6_theory_review",   "fromPort": 1, "to": "p6_merge", "toPort": 2 },
+    { "from": "p6_writing_review",  "fromPort": 1, "to": "p6_merge", "toPort": 3 },
+    { "from": "p6_citation_review", "fromPort": 1, "to": "p6_merge", "toPort": 4 },
+    { "from": "p6_originality",     "fromPort": 1, "to": "p6_merge", "toPort": 5 },
+    { "from": "p6_merge",   "fromPort": 1, "to": "p6_compile",  "toPort": 1 },
+    { "from": "p6_compile", "fromPort": 1, "to": "p7_revise",   "toPort": 1 },
+
+    { "from": "p7_revise", "fromPort": 2, "to": "p8_proof", "toPort": 1 },
+
+    { "from": "p8_proof",    "fromPort": 1, "to": "p8_format",   "toPort": 1 },
+    { "from": "p8_format",   "fromPort": 1, "to": "p8_branch",   "toPort": 1 },
+    { "from": "p8_branch",   "fromPort": 1, "to": "p8_preprint", "toPort": 1 },
+    { "from": "p8_branch",   "fromPort": 2, "to": "p8_journal",  "toPort": 1 },
+    { "from": "p8_preprint", "fromPort": 1, "to": "p8_merge",    "toPort": 1 },
+    { "from": "p8_journal",  "fromPort": 1, "to": "p8_merge",    "toPort": 2 },
+    { "from": "p8_merge",    "fromPort": 1, "to": "end",         "toPort": 1 }
+  ]
+}

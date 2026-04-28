@@ -1,0 +1,717 @@
+{
+  "name": "AI and the Future of Work - Multi-Start Presentation Design Workflow",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Design a polished presentation on AI and the future of work for a professional or academic audience.",
+    "phases": [
+      "P1 Multi-start discovery - audience, research, workforce, narrative, visual, and risk tracks launch independently",
+      "P2 Branch-level synthesis - each track merges its internal parallel agents into one usable brief",
+      "P3 Terminal integration - all track briefs merge into one deck strategy",
+      "P4 Slide production - deck sections are drafted in parallel and reconciled",
+      "P5 Quality gate and revision - source integrity, independent high-reasoning verification, APA formatting, sponsor approval, revision loop, and final handoff"
+    ],
+    "patternNote": "Multi-start with terminal merge. Six role-owned starts can be dispatched to independent agents at the same time. Each start also contains an internal parallel fan-out and merge so sub-agents can work independently within the track. The terminal merge waits for all track briefs before the deck architecture is created.",
+    "ideationStarts": [
+      {
+        "starts": [
+          "start_audience",
+          "start_research",
+          "start_workforce",
+          "start_narrative",
+          "start_visuals",
+          "start_risk"
+        ],
+        "sharedQuestion": "How should we design a compelling presentation about AI and the future of work?",
+        "framings": {
+          "start_audience": "Audience strategist - clarify who the presentation is for, what they need, and what success means.",
+          "start_research": "Evidence lead - collect current facts, examples, and credible signals.",
+          "start_workforce": "Workforce strategist - translate AI change into roles, skills, management, and organizational implications.",
+          "start_narrative": "Story lead - turn the topic into a clear argument and memorable arc.",
+          "start_visuals": "Presentation designer - define visual system, data visualization approach, and asset needs.",
+          "start_risk": "Ethics and risk lead - surface worker impact, bias, governance, and policy constraints."
+        },
+        "comparison": "final_merge integrates all six briefs into one deck strategy rather than preserving divergent artifacts."
+      }
+    ],
+    "independentBranchPoints": [
+      {
+        "after": "aud_fan",
+        "branches": ["aud_stakeholders", "aud_context", "aud_success"],
+        "note": "Audience stakeholder mapping, event context, and success criteria can be researched independently."
+      },
+      {
+        "after": "res_fan",
+        "branches": ["res_labor_market", "res_ai_capabilities", "res_case_studies", "res_current_signals"],
+        "note": "Evidence work splits cleanly across labor-market data, AI capability shifts, organizational cases, and current weak signals."
+      },
+      {
+        "after": "work_fan",
+        "branches": ["work_roles", "work_skills", "work_org_design"],
+        "note": "Role redesign, skill shifts, and management implications can be developed in parallel."
+      },
+      {
+        "after": "nar_fan",
+        "branches": ["nar_thesis", "nar_arc", "nar_takeaways"],
+        "note": "Thesis, section arc, and audience takeaways can be drafted independently before narrative merge."
+      },
+      {
+        "after": "vis_fan",
+        "branches": ["vis_style", "vis_data_viz", "vis_assets"],
+        "note": "Visual identity, chart strategy, and asset inventory can proceed independently."
+      },
+      {
+        "after": "risk_fan",
+        "branches": ["risk_ethics", "risk_jobs", "risk_policy"],
+        "note": "Ethics, worker displacement, and governance risks require separate focused passes."
+      },
+      {
+        "after": "slide_fan",
+        "branches": ["slide_open", "slide_now", "slide_work", "slide_skills", "slide_leadership", "slide_close"],
+        "note": "Once the deck architecture exists, slide section drafts can be assigned to parallel writing agents."
+      }
+    ],
+    "iterativeLoops": [
+      {
+        "node": "verifier_loop",
+        "iteratesOver": "independent AI verifier review rounds before sponsor approval",
+        "exitWhen": "the independent high-reasoning verifier returns an explicit PASS on evidence, narrative coherence, visual consistency, risk framing, and APA formatting"
+      },
+      {
+        "node": "revise_loop",
+        "iteratesOver": "stakeholder revision rounds after sponsor review",
+        "exitWhen": "all sponsor must-fix comments are addressed or the sponsor explicitly accepts known tradeoffs"
+      }
+    ],
+    "humanInTheLoop": ["wait_approval"],
+    "totalNodes": 64,
+    "totalConnections": 83
+  },
+  "nodes": [
+    {
+      "id": "start_audience",
+      "type": "start",
+      "label": "Start: Audience",
+      "x": 80,
+      "y": 120,
+      "purposeInstructions": "Audience Strategy Lead. Launch the audience track for an AI and future of work presentation. Define the likely audience, their decisions, their worries, and what the deck must help them do. Output a short seed brief for the audience sub-agents."
+    },
+    {
+      "id": "aud_fan",
+      "type": "parallel",
+      "label": "Audience Fan-out",
+      "x": 260,
+      "y": 120,
+      "purposeInstructions": "Dispatch three independent audience tasks: stakeholder map, presentation context, and success criteria. Keep the outputs separate until aud_merge."
+    },
+    {
+      "id": "aud_stakeholders",
+      "type": "generic",
+      "label": "Audience Map",
+      "x": 460,
+      "y": 0,
+      "purposeInstructions": "Map the primary and secondary audience groups. For each group, list likely knowledge level, strategic concerns, objections, and vocabulary to use or avoid. Output a compact persona table for the deck team."
+    },
+    {
+      "id": "aud_context",
+      "type": "generic",
+      "label": "Event Context",
+      "x": 460,
+      "y": 120,
+      "purposeInstructions": "Define the presentation setting. Assume format, length, room dynamics, speaker role, and expected follow-up. Flag any assumptions that materially change slide count or depth."
+    },
+    {
+      "id": "aud_success",
+      "type": "generic",
+      "label": "Success Criteria",
+      "x": 460,
+      "y": 240,
+      "purposeInstructions": "Define what success looks like after the presentation. Identify the audience's desired belief shift, action shift, and one or two memorable ideas they should retain."
+    },
+    {
+      "id": "aud_merge",
+      "type": "merge",
+      "label": "Merge: Audience",
+      "x": 680,
+      "y": 120,
+      "purposeInstructions": "Merge the audience map, event context, and success criteria into one audience brief. Resolve contradictions explicitly, especially around technical depth, tone, and call to action."
+    },
+    {
+      "id": "aud_brief",
+      "type": "generic",
+      "label": "Audience Brief",
+      "x": 900,
+      "y": 120,
+      "purposeInstructions": "Produce the final audience brief for integration. Include target audience, assumed deck length, tone, what to emphasize, what to avoid, and the decision or reflection the deck should provoke."
+    },
+    {
+      "id": "start_research",
+      "type": "start",
+      "label": "Start: Evidence",
+      "x": 80,
+      "y": 360,
+      "purposeInstructions": "Evidence Lead. Launch the research track for the AI and future of work presentation. Prioritize credible, recent, citable material that can support claims without turning the deck into a literature review."
+    },
+    {
+      "id": "res_fan",
+      "type": "parallel",
+      "label": "Evidence Fan-out",
+      "x": 260,
+      "y": 360,
+      "purposeInstructions": "Dispatch four independent research tasks: labor-market data, AI capability shifts, case examples, and current signals. Require source notes and claim confidence from every branch."
+    },
+    {
+      "id": "res_labor_market",
+      "type": "generic",
+      "label": "Labor Data",
+      "x": 460,
+      "y": 180,
+      "purposeInstructions": "Collect labor-market evidence relevant to AI and work. Focus on task exposure, job redesign, productivity, hiring signals, wage implications, and sector differences. Output 5 to 8 citable claims with source notes."
+    },
+    {
+      "id": "res_ai_capabilities",
+      "type": "generic",
+      "label": "AI Capabilities",
+      "x": 460,
+      "y": 300,
+      "purposeInstructions": "Summarize what current AI systems can and cannot do for workplace tasks. Cover automation, augmentation, agentic workflows, knowledge work, multimodal work, and remaining reliability limits. Output claims suitable for slide headlines."
+    },
+    {
+      "id": "res_case_studies",
+      "type": "generic",
+      "label": "Case Examples",
+      "x": 460,
+      "y": 420,
+      "purposeInstructions": "Find concrete organizational examples showing AI changing work. Include at least one successful adoption, one mixed result, and one cautionary case. For each, capture context, intervention, result, and lesson."
+    },
+    {
+      "id": "res_current_signals",
+      "type": "generic",
+      "label": "Current Signals",
+      "x": 460,
+      "y": 540,
+      "purposeInstructions": "Scan for current signals that should shape the deck: regulation, executive priorities, worker sentiment, union or policy responses, and enterprise AI adoption patterns. Output signal, why it matters, and confidence."
+    },
+    {
+      "id": "res_merge",
+      "type": "merge",
+      "label": "Merge: Evidence",
+      "x": 680,
+      "y": 360,
+      "purposeInstructions": "Merge all research branches into an evidence pack. De-duplicate claims, mark confidence, separate durable trends from speculative claims, and identify the strongest 8 to 12 facts for slides."
+    },
+    {
+      "id": "res_evidence_pack",
+      "type": "generic",
+      "label": "Evidence Pack",
+      "x": 900,
+      "y": 360,
+      "purposeInstructions": "Produce the final evidence pack. Include slide-ready claims, source notes, suggested charts, example callouts, and a section named 'claims to avoid or soften' for weak evidence."
+    },
+    {
+      "id": "start_workforce",
+      "type": "start",
+      "label": "Start: Workforce",
+      "x": 80,
+      "y": 600,
+      "purposeInstructions": "Workforce Strategy Lead. Launch the workforce implications track. Translate AI change into practical implications for roles, skills, management systems, and organizational design."
+    },
+    {
+      "id": "work_fan",
+      "type": "parallel",
+      "label": "Work Fan-out",
+      "x": 260,
+      "y": 600,
+      "purposeInstructions": "Dispatch independent workforce tasks for role redesign, skill shifts, and organization design. Each branch should produce actionable implications, not generic commentary."
+    },
+    {
+      "id": "work_roles",
+      "type": "generic",
+      "label": "Role Redesign",
+      "x": 460,
+      "y": 480,
+      "purposeInstructions": "Analyze how AI changes job roles through task decomposition. Identify which tasks are automated, augmented, newly created, or still human-owned. Output a role impact matrix."
+    },
+    {
+      "id": "work_skills",
+      "type": "generic",
+      "label": "Skill Shifts",
+      "x": 460,
+      "y": 600,
+      "purposeInstructions": "Identify the skills workers and leaders need. Cover AI literacy, judgment, prompting and delegation, domain expertise, collaboration with agents, data sensemaking, and change resilience. Output a skills roadmap."
+    },
+    {
+      "id": "work_org_design",
+      "type": "generic",
+      "label": "Org Design",
+      "x": 460,
+      "y": 720,
+      "purposeInstructions": "Analyze management and organization design implications. Cover workflow redesign, governance, incentives, accountability, training, and human oversight. Output leadership implications for 30-60-90 day action."
+    },
+    {
+      "id": "work_merge",
+      "type": "merge",
+      "label": "Merge: Workforce",
+      "x": 680,
+      "y": 600,
+      "purposeInstructions": "Merge role, skill, and organization design outputs into a coherent workforce implications brief. Remove generic claims and preserve concrete examples."
+    },
+    {
+      "id": "work_implications",
+      "type": "generic",
+      "label": "Work Brief",
+      "x": 900,
+      "y": 600,
+      "purposeInstructions": "Produce the final workforce brief. Include 3 to 5 practical implications, one role impact matrix, one skills roadmap, and leadership actions that can be presented clearly."
+    },
+    {
+      "id": "start_narrative",
+      "type": "start",
+      "label": "Start: Story",
+      "x": 80,
+      "y": 840,
+      "purposeInstructions": "Narrative Lead. Launch the story track. Convert the broad topic into a compelling point of view with a clear beginning, middle, and end."
+    },
+    {
+      "id": "nar_fan",
+      "type": "parallel",
+      "label": "Story Fan-out",
+      "x": 260,
+      "y": 840,
+      "purposeInstructions": "Dispatch independent narrative tasks for thesis, argument arc, and memorable takeaways. These should converge into one storyline."
+    },
+    {
+      "id": "nar_thesis",
+      "type": "generic",
+      "label": "Core Thesis",
+      "x": 460,
+      "y": 720,
+      "purposeInstructions": "Draft 3 possible core theses for the deck. Each thesis should be specific, arguable, and useful to the audience. Avoid empty claims like 'AI will change everything'. Recommend one thesis."
+    },
+    {
+      "id": "nar_arc",
+      "type": "generic",
+      "label": "Argument Arc",
+      "x": 460,
+      "y": 840,
+      "purposeInstructions": "Design the deck arc. Sequence the audience from current reality to implication to action. Output a 5 to 7 section flow with tension, evidence, and decision points."
+    },
+    {
+      "id": "nar_takeaways",
+      "type": "generic",
+      "label": "Takeaways",
+      "x": 460,
+      "y": 960,
+      "purposeInstructions": "Define the memorable takeaways. Produce 3 concise lines the audience should remember, plus one closing call to action. Make each takeaway slide-headline ready."
+    },
+    {
+      "id": "nar_merge",
+      "type": "merge",
+      "label": "Merge: Story",
+      "x": 680,
+      "y": 840,
+      "purposeInstructions": "Merge thesis, argument arc, and takeaways into one narrative strategy. Resolve any mismatch between the claim, section order, and final call to action."
+    },
+    {
+      "id": "nar_storyline",
+      "type": "generic",
+      "label": "Storyline Brief",
+      "x": 900,
+      "y": 840,
+      "purposeInstructions": "Produce the final storyline brief. Include the recommended thesis, section sequence, key tension, audience promise, and the exact closing idea."
+    },
+    {
+      "id": "start_visuals",
+      "type": "start",
+      "label": "Start: Visuals",
+      "x": 80,
+      "y": 1080,
+      "purposeInstructions": "Presentation Design Lead. Launch the visual design track. Define the deck's visual language, chart strategy, and asset needs for a polished presentation about AI and work."
+    },
+    {
+      "id": "vis_fan",
+      "type": "parallel",
+      "label": "Visual Fan-out",
+      "x": 260,
+      "y": 1080,
+      "purposeInstructions": "Dispatch independent visual tasks for style direction, data visualization, and asset inventory. Require slide-practical outputs, not abstract moodboards."
+    },
+    {
+      "id": "vis_style",
+      "type": "generic",
+      "label": "Style System",
+      "x": 460,
+      "y": 960,
+      "purposeInstructions": "Define the deck style system. Specify tone, color palette, typography direction, layout grid, icon style, and accessibility constraints. Keep it professional and readable."
+    },
+    {
+      "id": "vis_data_viz",
+      "type": "generic",
+      "label": "Chart Strategy",
+      "x": 460,
+      "y": 1080,
+      "purposeInstructions": "Design the data visualization approach. Map expected evidence types to chart types, note what should be annotated, and warn against misleading chart choices."
+    },
+    {
+      "id": "vis_assets",
+      "type": "generic",
+      "label": "Asset Inventory",
+      "x": 460,
+      "y": 1200,
+      "purposeInstructions": "List needed visual assets: diagrams, icons, screenshots, photos, simple process visuals, and data charts. For each, describe purpose, source or creation path, and slide placement."
+    },
+    {
+      "id": "vis_merge",
+      "type": "merge",
+      "label": "Merge: Visuals",
+      "x": 680,
+      "y": 1080,
+      "purposeInstructions": "Merge style, chart strategy, and asset inventory into one visual design brief. Ensure the visual system supports the storyline rather than competing with it."
+    },
+    {
+      "id": "vis_design_system",
+      "type": "generic",
+      "label": "Design Brief",
+      "x": 900,
+      "y": 1080,
+      "purposeInstructions": "Produce the final design brief. Include slide master direction, palette, type, chart rules, icon and image guidance, accessibility notes, and a list of must-create visuals."
+    },
+    {
+      "id": "start_risk",
+      "type": "start",
+      "label": "Start: Risks",
+      "x": 80,
+      "y": 1320,
+      "purposeInstructions": "Ethics and Risk Lead. Launch the risk track. Ensure the deck handles worker impact, bias, governance, and policy responsibly without becoming alarmist."
+    },
+    {
+      "id": "risk_fan",
+      "type": "parallel",
+      "label": "Risk Fan-out",
+      "x": 260,
+      "y": 1320,
+      "purposeInstructions": "Dispatch independent risk tasks for ethics, job displacement, and governance or policy. Each branch should produce concrete cautions and mitigation language."
+    },
+    {
+      "id": "risk_ethics",
+      "type": "generic",
+      "label": "Ethics Pass",
+      "x": 460,
+      "y": 1200,
+      "purposeInstructions": "Assess ethical issues in AI at work: surveillance, fairness, autonomy, opacity, accountability, and worker dignity. Output the top issues and responsible framing language."
+    },
+    {
+      "id": "risk_jobs",
+      "type": "generic",
+      "label": "Job Impact",
+      "x": 460,
+      "y": 1320,
+      "purposeInstructions": "Assess job displacement and inequality risks. Separate task exposure from job loss, identify groups likely to be affected unevenly, and suggest careful wording for the deck."
+    },
+    {
+      "id": "risk_policy",
+      "type": "generic",
+      "label": "Governance",
+      "x": 460,
+      "y": 1440,
+      "purposeInstructions": "Summarize governance and policy considerations. Cover internal AI use rules, data protection, auditability, labor consultation, and regulatory uncertainty. Output practical guardrails."
+    },
+    {
+      "id": "risk_merge",
+      "type": "merge",
+      "label": "Merge: Risks",
+      "x": 680,
+      "y": 1320,
+      "purposeInstructions": "Merge ethics, job impact, and governance outputs into one risk brief. Balance the deck so it is credible, constructive, and not hype-driven."
+    },
+    {
+      "id": "risk_guardrails",
+      "type": "generic",
+      "label": "Risk Brief",
+      "x": 900,
+      "y": 1320,
+      "purposeInstructions": "Produce the final risk brief. Include required caveats, responsible language, risk slides to include, and claims the deck should avoid unless sourced strongly."
+    },
+    {
+      "id": "final_merge",
+      "type": "merge",
+      "label": "Merge: Final Inputs",
+      "x": 1180,
+      "y": 720,
+      "purposeInstructions": "Terminal integration merge. Wait for audience, evidence, workforce, storyline, design, and risk briefs. Identify contradictions, missing material, and the strongest integrated deck direction."
+    },
+    {
+      "id": "deck_architect",
+      "type": "generic",
+      "label": "Deck Architect",
+      "x": 1400,
+      "y": 720,
+      "purposeInstructions": "Create the deck architecture. Define target length, section sequence, slide count, slide titles, objective for each section, and where evidence and visuals belong. Output a slide-by-slide blueprint."
+    },
+    {
+      "id": "slide_fan",
+      "type": "parallel",
+      "label": "Slide Draft Fan-out",
+      "x": 1620,
+      "y": 720,
+      "purposeInstructions": "Dispatch slide section drafting in parallel based on the approved deck architecture. Each branch must follow the same thesis, visual system, and evidence pack."
+    },
+    {
+      "id": "slide_open",
+      "type": "generic",
+      "label": "Opening Slides",
+      "x": 1840,
+      "y": 420,
+      "purposeInstructions": "Draft opening slides. Include title, audience hook, why now, and the deck's thesis. Keep the first three minutes focused and credible."
+    },
+    {
+      "id": "slide_now",
+      "type": "generic",
+      "label": "What Changed",
+      "x": 1840,
+      "y": 540,
+      "purposeInstructions": "Draft the section explaining what changed with AI. Use capability evidence and adoption signals. Avoid technical over-explanation unless the audience brief requires it."
+    },
+    {
+      "id": "slide_work",
+      "type": "generic",
+      "label": "Work Impact",
+      "x": 1840,
+      "y": 660,
+      "purposeInstructions": "Draft the work impact section. Use role redesign, task exposure, case examples, and workforce implications. Make the distinction between automation and augmentation clear."
+    },
+    {
+      "id": "slide_skills",
+      "type": "generic",
+      "label": "Skills Section",
+      "x": 1840,
+      "y": 780,
+      "purposeInstructions": "Draft the skills and learning section. Convert the skills roadmap into slides that leaders and workers can act on. Include examples of new human-plus-AI workflows."
+    },
+    {
+      "id": "slide_leadership",
+      "type": "generic",
+      "label": "Leader Actions",
+      "x": 1840,
+      "y": 900,
+      "purposeInstructions": "Draft the leadership action section. Include governance, redesign, training, measurement, and 30-60-90 day next steps. Keep it practical and non-generic."
+    },
+    {
+      "id": "slide_close",
+      "type": "generic",
+      "label": "Closing Slides",
+      "x": 1840,
+      "y": 1020,
+      "purposeInstructions": "Draft closing slides. Restate the thesis, summarize the three strongest takeaways, and end with a concrete call to action that matches the audience brief."
+    },
+    {
+      "id": "slide_merge",
+      "type": "merge",
+      "label": "Merge: Slides",
+      "x": 2060,
+      "y": 720,
+      "purposeInstructions": "Merge the parallel slide sections into one coherent deck draft. Resolve duplicated slides, inconsistent terminology, weak transitions, and visual mismatches."
+    },
+    {
+      "id": "deck_editor",
+      "type": "generic",
+      "label": "Editorial Pass",
+      "x": 2280,
+      "y": 720,
+      "purposeInstructions": "Perform a full editorial pass. Tighten slide titles, make each slide say one thing, remove unsupported claims, improve transitions, and ensure the deck sounds like one speaker."
+    },
+    {
+      "id": "factcheck_trycatch",
+      "type": "trycatch",
+      "label": "Check Sources",
+      "x": 2500,
+      "y": 720,
+      "purposeInstructions": "Check the deck for source integrity. Output 1 continues if every factual claim is supported or softened and every cited source has enough metadata for APA 7 formatting. Output 2 escalates if material claims lack sources, conflict with evidence, depend on stale information, or cannot be cited responsibly."
+    },
+    {
+      "id": "end_escalate_sources",
+      "type": "end",
+      "label": "End: Source Fix",
+      "x": 2720,
+      "y": 920,
+      "purposeInstructions": "Escalation end. The deck is blocked because source integrity failed. Return to the evidence track or manually replace unsupported claims before using the deck. Fix APA metadata gaps before re-entering the source check."
+    },
+    {
+      "id": "verifier_loop",
+      "type": "loop",
+      "label": "Loop: AI Verify",
+      "x": 2720,
+      "y": 720,
+      "purposeInstructions": "Independent verification loop controller. Keep routing the deck through an independent high-reasoning AI verifier and a targeted revision pass until the verifier returns an explicit PASS.",
+      "loopDefinition": "Iterate over independent AI verification rounds. Each pass asks a separate high-reasoning verifier to audit the whole deck, then applies only the required fixes before returning for another verification decision.",
+      "stopMode": "all",
+      "stopConditions": [
+        {
+          "text": "The independent AI verifier returns an explicit PASS, not a qualified pass."
+        },
+        {
+          "text": "All high- and medium-severity issues from prior verifier rounds are resolved or explicitly accepted with rationale."
+        },
+        {
+          "text": "All factual claims have APA 7-compatible in-slide citations or speaker-note citations plus matching reference entries."
+        },
+        {
+          "text": "The deck passes coherence, audience fit, visual consistency, accessibility, and risk-framing checks."
+        }
+      ]
+    },
+    {
+      "id": "independent_verifier",
+      "type": "generic",
+      "label": "AI Verifier",
+      "x": 2940,
+      "y": 540,
+      "purposeInstructions": "Independent high-reasoning AI verifier. Review the deck as a skeptical external evaluator, not as the author.\n\nUse high-reasoning mode and inspect: thesis clarity, slide sequence, evidence quality, unsupported claims, APA 7 citation and reference formatting, visual consistency, accessibility, audience fit, and risk framing.\n\nReturn exactly one status: PASS or FAIL. PASS is allowed only if there are no unresolved high- or medium-severity issues. If FAIL, output a prioritized fix list with slide numbers, issue severity, required change, and APA citation or reference fixes where applicable."
+    },
+    {
+      "id": "apply_verifier_revisions",
+      "type": "generic",
+      "label": "Fix Verifier Issues",
+      "x": 3160,
+      "y": 540,
+      "purposeInstructions": "Apply one targeted revision pass from the independent verifier's findings. Fix high- and medium-severity issues first. Preserve the deck thesis, avoid broad rewrites, and update APA 7 in-slide citations, speaker-note citations, and reference entries as needed.\n\nOutput a revision log mapping every verifier issue to fixed, accepted-with-rationale, or deferred-with-risk. Return the revised deck and log to verifier_loop."
+    },
+    {
+      "id": "wait_approval",
+      "type": "wait",
+      "label": "Wait: Sponsor Approval",
+      "x": 3160,
+      "y": 720,
+      "purposeInstructions": "Sponsor approval gate. Stop only after the independent high-reasoning AI verifier has returned PASS. the user or the presentation owner reviews the deck strategy, slide flow, evidence quality, APA formatting, and tone. Record approval, required changes, or accepted tradeoffs."
+    },
+    {
+      "id": "revise_loop",
+      "type": "loop",
+      "label": "Loop: Revise Deck",
+      "x": 3380,
+      "y": 720,
+      "purposeInstructions": "Revision loop controller. Route sponsor comments into one revision pass at a time, then re-check whether all must-fix feedback is addressed.",
+      "loopDefinition": "Iterate over sponsor feedback rounds. Each pass updates deck structure, slide text, visual notes, evidence caveats, and APA formatting only where needed.",
+      "stopMode": "all",
+      "stopConditions": [
+        {
+          "text": "All sponsor must-fix comments have been addressed."
+        },
+        {
+          "text": "No new unsupported factual claims were introduced during revision."
+        },
+        {
+          "text": "The sponsor explicitly approves the remaining tradeoffs."
+        }
+      ]
+    },
+    {
+      "id": "revise_deck",
+      "type": "generic",
+      "label": "Apply Revisions",
+      "x": 3600,
+      "y": 540,
+      "purposeInstructions": "Apply one sponsor revision pass. Update only the slides or notes touched by sponsor feedback, preserve the deck thesis, maintain APA 7 formatting, and log every change. Return the revised deck to revise_loop for exit evaluation."
+    },
+    {
+      "id": "final_package",
+      "type": "generic",
+      "label": "Final Package",
+      "x": 3600,
+      "y": 720,
+      "purposeInstructions": "Prepare final presentation package. Include slide-by-slide outline, speaker notes, APA 7 reference list, source appendix, visual asset list, verifier PASS note, revision log, and a short delivery checklist for the presenter."
+    },
+    {
+      "id": "end_ready",
+      "type": "end",
+      "label": "End: Deck Ready",
+      "x": 3820,
+      "y": 720,
+      "purposeInstructions": "Presentation design workflow complete. The final output is a source-backed, APA-formatted presentation plan and deck package for AI and the future of work, approved by the independent verifier and sponsor."
+    }
+  ],
+  "connections": [
+    { "from": "start_audience", "fromPort": 1, "to": "aud_fan", "toPort": 1 },
+    { "from": "aud_fan", "fromPort": 1, "to": "aud_stakeholders", "toPort": 1 },
+    { "from": "aud_fan", "fromPort": 2, "to": "aud_context", "toPort": 1 },
+    { "from": "aud_fan", "fromPort": 3, "to": "aud_success", "toPort": 1 },
+    { "from": "aud_stakeholders", "fromPort": 1, "to": "aud_merge", "toPort": 1 },
+    { "from": "aud_context", "fromPort": 1, "to": "aud_merge", "toPort": 2 },
+    { "from": "aud_success", "fromPort": 1, "to": "aud_merge", "toPort": 3 },
+    { "from": "aud_merge", "fromPort": 1, "to": "aud_brief", "toPort": 1 },
+    { "from": "aud_brief", "fromPort": 1, "to": "final_merge", "toPort": 1 },
+    { "from": "start_research", "fromPort": 1, "to": "res_fan", "toPort": 1 },
+    { "from": "res_fan", "fromPort": 1, "to": "res_labor_market", "toPort": 1 },
+    { "from": "res_fan", "fromPort": 2, "to": "res_ai_capabilities", "toPort": 1 },
+    { "from": "res_fan", "fromPort": 3, "to": "res_case_studies", "toPort": 1 },
+    { "from": "res_fan", "fromPort": 4, "to": "res_current_signals", "toPort": 1 },
+    { "from": "res_labor_market", "fromPort": 1, "to": "res_merge", "toPort": 1 },
+    { "from": "res_ai_capabilities", "fromPort": 1, "to": "res_merge", "toPort": 2 },
+    { "from": "res_case_studies", "fromPort": 1, "to": "res_merge", "toPort": 3 },
+    { "from": "res_current_signals", "fromPort": 1, "to": "res_merge", "toPort": 4 },
+    { "from": "res_merge", "fromPort": 1, "to": "res_evidence_pack", "toPort": 1 },
+    { "from": "res_evidence_pack", "fromPort": 1, "to": "final_merge", "toPort": 2 },
+    { "from": "start_workforce", "fromPort": 1, "to": "work_fan", "toPort": 1 },
+    { "from": "work_fan", "fromPort": 1, "to": "work_roles", "toPort": 1 },
+    { "from": "work_fan", "fromPort": 2, "to": "work_skills", "toPort": 1 },
+    { "from": "work_fan", "fromPort": 3, "to": "work_org_design", "toPort": 1 },
+    { "from": "work_roles", "fromPort": 1, "to": "work_merge", "toPort": 1 },
+    { "from": "work_skills", "fromPort": 1, "to": "work_merge", "toPort": 2 },
+    { "from": "work_org_design", "fromPort": 1, "to": "work_merge", "toPort": 3 },
+    { "from": "work_merge", "fromPort": 1, "to": "work_implications", "toPort": 1 },
+    { "from": "work_implications", "fromPort": 1, "to": "final_merge", "toPort": 3 },
+    { "from": "start_narrative", "fromPort": 1, "to": "nar_fan", "toPort": 1 },
+    { "from": "nar_fan", "fromPort": 1, "to": "nar_thesis", "toPort": 1 },
+    { "from": "nar_fan", "fromPort": 2, "to": "nar_arc", "toPort": 1 },
+    { "from": "nar_fan", "fromPort": 3, "to": "nar_takeaways", "toPort": 1 },
+    { "from": "nar_thesis", "fromPort": 1, "to": "nar_merge", "toPort": 1 },
+    { "from": "nar_arc", "fromPort": 1, "to": "nar_merge", "toPort": 2 },
+    { "from": "nar_takeaways", "fromPort": 1, "to": "nar_merge", "toPort": 3 },
+    { "from": "nar_merge", "fromPort": 1, "to": "nar_storyline", "toPort": 1 },
+    { "from": "nar_storyline", "fromPort": 1, "to": "final_merge", "toPort": 4 },
+    { "from": "start_visuals", "fromPort": 1, "to": "vis_fan", "toPort": 1 },
+    { "from": "vis_fan", "fromPort": 1, "to": "vis_style", "toPort": 1 },
+    { "from": "vis_fan", "fromPort": 2, "to": "vis_data_viz", "toPort": 1 },
+    { "from": "vis_fan", "fromPort": 3, "to": "vis_assets", "toPort": 1 },
+    { "from": "vis_style", "fromPort": 1, "to": "vis_merge", "toPort": 1 },
+    { "from": "vis_data_viz", "fromPort": 1, "to": "vis_merge", "toPort": 2 },
+    { "from": "vis_assets", "fromPort": 1, "to": "vis_merge", "toPort": 3 },
+    { "from": "vis_merge", "fromPort": 1, "to": "vis_design_system", "toPort": 1 },
+    { "from": "vis_design_system", "fromPort": 1, "to": "final_merge", "toPort": 5 },
+    { "from": "start_risk", "fromPort": 1, "to": "risk_fan", "toPort": 1 },
+    { "from": "risk_fan", "fromPort": 1, "to": "risk_ethics", "toPort": 1 },
+    { "from": "risk_fan", "fromPort": 2, "to": "risk_jobs", "toPort": 1 },
+    { "from": "risk_fan", "fromPort": 3, "to": "risk_policy", "toPort": 1 },
+    { "from": "risk_ethics", "fromPort": 1, "to": "risk_merge", "toPort": 1 },
+    { "from": "risk_jobs", "fromPort": 1, "to": "risk_merge", "toPort": 2 },
+    { "from": "risk_policy", "fromPort": 1, "to": "risk_merge", "toPort": 3 },
+    { "from": "risk_merge", "fromPort": 1, "to": "risk_guardrails", "toPort": 1 },
+    { "from": "risk_guardrails", "fromPort": 1, "to": "final_merge", "toPort": 6 },
+    { "from": "final_merge", "fromPort": 1, "to": "deck_architect", "toPort": 1 },
+    { "from": "deck_architect", "fromPort": 1, "to": "slide_fan", "toPort": 1 },
+    { "from": "slide_fan", "fromPort": 1, "to": "slide_open", "toPort": 1 },
+    { "from": "slide_fan", "fromPort": 2, "to": "slide_now", "toPort": 1 },
+    { "from": "slide_fan", "fromPort": 3, "to": "slide_work", "toPort": 1 },
+    { "from": "slide_fan", "fromPort": 4, "to": "slide_skills", "toPort": 1 },
+    { "from": "slide_fan", "fromPort": 5, "to": "slide_leadership", "toPort": 1 },
+    { "from": "slide_fan", "fromPort": 6, "to": "slide_close", "toPort": 1 },
+    { "from": "slide_open", "fromPort": 1, "to": "slide_merge", "toPort": 1 },
+    { "from": "slide_now", "fromPort": 1, "to": "slide_merge", "toPort": 2 },
+    { "from": "slide_work", "fromPort": 1, "to": "slide_merge", "toPort": 3 },
+    { "from": "slide_skills", "fromPort": 1, "to": "slide_merge", "toPort": 4 },
+    { "from": "slide_leadership", "fromPort": 1, "to": "slide_merge", "toPort": 5 },
+    { "from": "slide_close", "fromPort": 1, "to": "slide_merge", "toPort": 6 },
+    { "from": "slide_merge", "fromPort": 1, "to": "deck_editor", "toPort": 1 },
+    { "from": "deck_editor", "fromPort": 1, "to": "factcheck_trycatch", "toPort": 1 },
+    { "from": "factcheck_trycatch", "fromPort": 1, "to": "verifier_loop", "toPort": 1 },
+    { "from": "factcheck_trycatch", "fromPort": 2, "to": "end_escalate_sources", "toPort": 1 },
+    { "from": "verifier_loop", "fromPort": 1, "to": "independent_verifier", "toPort": 1 },
+    { "from": "independent_verifier", "fromPort": 1, "to": "apply_verifier_revisions", "toPort": 1 },
+    { "from": "apply_verifier_revisions", "fromPort": 1, "to": "verifier_loop", "toPort": 2 },
+    { "from": "verifier_loop", "fromPort": 2, "to": "wait_approval", "toPort": 1 },
+    { "from": "wait_approval", "fromPort": 1, "to": "revise_loop", "toPort": 1 },
+    { "from": "revise_loop", "fromPort": 1, "to": "revise_deck", "toPort": 1 },
+    { "from": "revise_deck", "fromPort": 1, "to": "revise_loop", "toPort": 2 },
+    { "from": "revise_loop", "fromPort": 2, "to": "final_package", "toPort": 1 },
+    { "from": "final_package", "fromPort": 1, "to": "end_ready", "toPort": 1 }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "name": "Greenwashing — Literature Review Pipeline",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "start",
+      "label": "Start",
+      "purposeInstructions": "",
+      "inputs": 0,
+      "outputs": 1,
+      "x": 408,
+      "y": 593
+    },
+    {
+      "id": "n2",
+      "type": "parallel",
+      "label": "Parallel",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 3,
+      "x": 722,
+      "y": 593
+    },
+    {
+      "id": "n3",
+      "type": "generic",
+      "label": "Generic",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 1,
+      "x": 928,
+      "y": 471
+    },
+    {
+      "id": "n4",
+      "type": "generic",
+      "label": "Generic",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 1,
+      "x": 940,
+      "y": 669
+    },
+    {
+      "id": "n5",
+      "type": "generic",
+      "label": "Generic",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 1,
+      "x": 935,
+      "y": 837
+    },
+    {
+      "id": "n6",
+      "type": "merge",
+      "label": "Merge",
+      "purposeInstructions": "",
+      "inputs": 3,
+      "outputs": 1,
+      "x": 1260,
+      "y": 658
+    },
+    {
+      "id": "n7",
+      "type": "branch",
+      "label": "Branch",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 2,
+      "x": 1518,
+      "y": 656
+    },
+    {
+      "id": "n8",
+      "type": "generic",
+      "label": "Generic",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 1,
+      "x": 1750,
+      "y": 506
+    },
+    {
+      "id": "n9",
+      "type": "generic",
+      "label": "Generic",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 1,
+      "x": 1747,
+      "y": 754
+    },
+    {
+      "id": "n10",
+      "type": "start",
+      "label": "Start",
+      "purposeInstructions": "",
+      "inputs": 0,
+      "outputs": 1,
+      "x": 658,
+      "y": 1147
+    },
+    {
+      "id": "n11",
+      "type": "parallel",
+      "label": "Parallel",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 2,
+      "x": 958,
+      "y": 1145
+    },
+    {
+      "id": "n12",
+      "type": "generic",
+      "label": "Generic",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 1,
+      "x": 1275,
+      "y": 1026
+    },
+    {
+      "id": "n13",
+      "type": "generic",
+      "label": "Generic",
+      "purposeInstructions": "",
+      "inputs": 1,
+      "outputs": 1,
+      "x": 1265,
+      "y": 1256
+    }
+  ],
+  "connections": [
+    {
+      "from": "n1",
+      "fromPort": 1,
+      "to": "n2",
+      "toPort": 1
+    },
+    {
+      "from": "n2",
+      "fromPort": 1,
+      "to": "n3",
+      "toPort": 1
+    },
+    {
+      "from": "n2",
+      "fromPort": 2,
+      "to": "n4",
+      "toPort": 1
+    },
+    {
+      "from": "n2",
+      "fromPort": 3,
+      "to": "n5",
+      "toPort": 1
+    },
+    {
+      "from": "n3",
+      "fromPort": 1,
+      "to": "n6",
+      "toPort": 1
+    },
+    {
+      "from": "n4",
+      "fromPort": 1,
+      "to": "n6",
+      "toPort": 2
+    },
+    {
+      "from": "n5",
+      "fromPort": 1,
+      "to": "n6",
+      "toPort": 3
+    },
+    {
+      "from": "n6",
+      "fromPort": 1,
+      "to": "n7",
+      "toPort": 1
+    },
+    {
+      "from": "n7",
+      "fromPort": 1,
+      "to": "n8",
+      "toPort": 1
+    },
+    {
+      "from": "n7",
+      "fromPort": 2,
+      "to": "n9",
+      "toPort": 1
+    },
+    {
+      "from": "n10",
+      "fromPort": 1,
+      "to": "n11",
+      "toPort": 1
+    },
+    {
+      "from": "n11",
+      "fromPort": 1,
+      "to": "n12",
+      "toPort": 1
+    },
+    {
+      "from": "n11",
+      "fromPort": 2,
+      "to": "n13",
+      "toPort": 1
+    }
+  ]
+}

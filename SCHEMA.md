@@ -88,3 +88,13 @@ Connections use stable node IDs and 1-indexed ports:
 ## Compatibility
 
 The importer still accepts older examples without `schemaVersion`, `workflowKind`, port roles, agent metadata, or progress claims. Export normalizes workflows to schema `0.4`.
+
+## Examples
+
+Working JSON files live under [`workflows/examples/`](workflows/examples/). Three useful starting points:
+
+- [`single-full_dinner-party.json`](workflows/examples/single-full_dinner-party.json) — touches most primitives in one workflow (start, parallel, merge, loop, wait, end).
+- [`greenwashing.json`](workflows/examples/greenwashing.json) — full-scale pipeline (66 nodes / 91 connections) with parallel fan-outs, loops, and a human-in-the-loop wait.
+- [`trycatch-escalation_grant-application.json`](workflows/examples/trycatch-escalation_grant-application.json) — trycatch with an escalation path.
+
+For the design intent behind each pattern (when to pick what, how to compose them, how the schema fields tie back to design decisions), see [`skills/plan/SKILL.md`](skills/plan/SKILL.md). For the full pattern → example map, see [AGENT-CANVAS.md](AGENT-CANVAS.md).

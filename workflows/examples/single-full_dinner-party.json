@@ -1,0 +1,218 @@
+{
+  "name": "Saturday-Evening Dinner Party for 6",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Planning and hosting a small Saturday-evening dinner party for 6 guests",
+    "phases": [
+      "P0 Concept",
+      "P1 Guest list & invites",
+      "P2 Menu & shopping prep (parallel)",
+      "P3 Procurement",
+      "P4 Day-of cooking (with taste-test loop)",
+      "P5 Service & hosting",
+      "P6 Wrap-up"
+    ],
+    "independentBranchPoints": [
+      {
+        "after": "p2_fan",
+        "branches": ["p2_menu", "p2_ambience", "p2_drinks"],
+        "note": "Menu, ambience plan, and drinks plan are independent design tracks once the guest list and dietary needs are fixed; they reconverge at the shopping list builder."
+      }
+    ],
+    "iterativeLoops": [
+      {
+        "node": "p4_taste_loop",
+        "iteratesOver": "taste-test rounds during cooking",
+        "exitWhen": "All dishes pass salt/acid/seasoning check OR 30 minutes before guest arrival, whichever comes first"
+      }
+    ],
+    "humanInTheLoop": ["p1_rsvp_wait"],
+    "totalNodes": 16,
+    "totalConnections": 17
+  },
+  "nodes": [
+    {
+      "id": "p0_start",
+      "type": "start",
+      "label": "Kickoff",
+      "x": 100,
+      "y": 500,
+      "purposeInstructions": "Pipeline entry. Triggered the Sunday before the target Saturday. Capture the fixed inputs: date (this Saturday), guest count target (6), location (host's home), and budget ceiling. Hand off to concept.",
+      "outputs": 1
+    },
+    {
+      "id": "p0_concept",
+      "type": "generic",
+      "label": "Set vibe & theme",
+      "x": 280,
+      "y": 500,
+      "purposeInstructions": "Concept Agent. Define the evening's vibe in one sentence (e.g., 'relaxed Mediterranean supper, candlelit, conversation-first'). Decide formality (casual / smart-casual), seated vs. buffet, and target end time. Output: a one-paragraph concept brief that all later agents reference. Avoid scope creep — no themes that require costumes or rented equipment.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p1_guests",
+      "type": "generic",
+      "label": "Build guest list",
+      "x": 460,
+      "y": 500,
+      "purposeInstructions": "Guest Curation Agent. Draft a shortlist of 6 guests (plus 2 alternates) who mix well: balance talkers vs. listeners, avoid known interpersonal conflicts, and consider plus-ones already implicitly invited. Output: ordered list with phone/email, dietary flags known in advance, and a 1-line rationale per guest. Do not include anyone the host hasn't seen socially in the last year without flagging it.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p1_invite",
+      "type": "generic",
+      "label": "Send invites",
+      "x": 640,
+      "y": 500,
+      "purposeInstructions": "Invitation Agent. Send a warm, short invite (text or email per guest preference) including: date, arrival time (6:30pm), expected end (~10:30pm), dress code, and a direct ask about dietary restrictions/allergies. Stagger sends so close friends hear first. Track RSVPs in a simple list. Do NOT reveal the guest list to invitees unless asked.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p1_rsvp_wait",
+      "type": "wait",
+      "label": "Wait: guest RSVPs",
+      "x": 820,
+      "y": 500,
+      "purposeInstructions": "Human-in-the-loop gate. Hold the pipeline until all 6 invitees have responded, OR until Wednesday evening (T-3 days), whichever comes first. The host confirms the final 6 and the consolidated dietary/allergy list before release. If fewer than 6 confirm, host decides whether to invite alternates or proceed smaller — that decision releases this gate.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p2_fan",
+      "type": "parallel",
+      "label": "Plan tracks",
+      "x": 1000,
+      "y": 500,
+      "purposeInstructions": "Parallel fan-out. With the confirmed guest list and dietary constraints fixed, dispatch three independent planning tracks: menu, ambience, and drinks. They share inputs but produce independent artifacts that reconverge at the shopping list builder. Do not let any track block the others.",
+      "inputs": 1,
+      "outputs": 3
+    },
+    {
+      "id": "p2_menu",
+      "type": "generic",
+      "label": "Design menu",
+      "x": 1180,
+      "y": 380,
+      "purposeInstructions": "Menu Agent. Design a 3-course menu (starter, main, dessert) that respects every dietary flag from the RSVPs, leans on seasonal ingredients, and keeps active cooking under 90 minutes the day-of. Favor one make-ahead dish per course. Output: per-dish recipe with serves-6 quantities and a prep-vs-day-of split. Avoid recipes the host has not cooked at least once before.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p2_ambience",
+      "type": "generic",
+      "label": "Plan ambience",
+      "x": 1180,
+      "y": 500,
+      "purposeInstructions": "Ambience Agent. Plan table setting for 6 (place settings, candles, flowers/centerpiece kept low so people can see across), lighting scheme (dim overheads, lamps + candles), and a 3-hour playlist matched to the concept (background-volume only, no jarring transitions). Output: setup checklist and Spotify/Apple playlist link. Avoid anything fragrant that would compete with the food.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p2_drinks",
+      "type": "generic",
+      "label": "Plan drinks",
+      "x": 1180,
+      "y": 620,
+      "purposeInstructions": "Beverage Agent. Plan a welcome drink, one wine pairing for the main (or two — one white, one red), and at least two thoughtful non-alcoholic options (not just water/soda). Estimate quantities: ~1.5 drinks/guest welcome, ~half-bottle wine/drinking-guest. Output: drinks list with brands/styles and quantities, flagged by which need chilling time.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p3_shopping",
+      "type": "merge",
+      "label": "Consolidated list",
+      "x": 1360,
+      "y": 500,
+      "purposeInstructions": "Shopping List Merge. Combine outputs from menu, ambience, and drinks into a single shopping list, grouped by store/section (grocery, butcher/fishmonger, wine shop, florist). Deduplicate items and reconcile quantity overlaps. Output: ordered shopping route that minimizes back-tracking, with a 'do this first' header for items needing pickup-day-of (bread, fish, flowers).",
+      "inputs": 3,
+      "outputs": 1
+    },
+    {
+      "id": "p3_shop",
+      "type": "generic",
+      "label": "Shop & prep",
+      "x": 1540,
+      "y": 500,
+      "purposeInstructions": "Procurement Agent. Execute the shopping run on Friday for shelf-stable + non-perishables and Saturday morning for fresh items (fish, bread, herbs, flowers). On Friday evening do all make-ahead prep flagged by the menu (marinades, stocks, dessert that improves resting). Output: kitchen state at Saturday noon — what is already done, what remains. Verify nothing is missing before moving on.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p4_cook",
+      "type": "generic",
+      "label": "Day-of cooking",
+      "x": 1720,
+      "y": 500,
+      "purposeInstructions": "Cooking Agent. Starting at T-3 hours (3:30pm for a 6:30pm arrival), execute the day-of cooking schedule: stage mise en place, start the slowest dish first, hold finished components warm, plate sauces last. Keep a single timer/checklist visible. Output: each dish ready within its serving window. Do NOT start anything new in the last 20 minutes before guests arrive.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p4_taste_loop",
+      "type": "loop",
+      "label": "Taste & adjust",
+      "x": 1900,
+      "y": 500,
+      "purposeInstructions": "Taste-Test Loop. For each dish nearing completion, taste for salt, acid, fat, heat, and texture. Adjust and re-taste. Continue until the dish passes or until T-30 minutes (then plate as-is — over-tinkering past that point is worse than imperfect seasoning). Track which dishes were adjusted so plating order can compensate.",
+      "inputs": 2,
+      "outputs": 2,
+      "loopDefinition": "Iterate over each dish; taste, adjust seasoning/acid/fat, re-taste.",
+      "stopMode": "any",
+      "stopConditions": [
+        { "text": "All 3 dishes pass the salt/acid/seasoning check" },
+        { "text": "Clock reaches T-30 minutes before guest arrival" }
+      ]
+    },
+    {
+      "id": "p5_service",
+      "type": "generic",
+      "label": "Host & serve",
+      "x": 2080,
+      "y": 500,
+      "purposeInstructions": "Hosting Agent. Greet guests at the door, hand off welcome drinks within 2 minutes of arrival, seat by 7:00pm. Serve courses with ~45-minute spacing. Read the room: pause between courses if conversation is good, accelerate if energy is dipping. Refill drinks proactively. Avoid disappearing into the kitchen for more than 5 minutes at a stretch — the host is part of the experience.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p6_cleanup",
+      "type": "generic",
+      "label": "Wrap & cleanup",
+      "x": 2260,
+      "y": 500,
+      "purposeInstructions": "Cleanup & Reflection Agent. After the last guest leaves: load dishwasher, wrap leftovers (label with date), wipe surfaces, take out trash. Next morning: a 5-minute reflection note — what worked, what didn't, which guests should be re-invited together, which dish to repeat or retire. Save the note for the next dinner-party plan. Do NOT attempt deep cleaning the same night.",
+      "inputs": 1,
+      "outputs": 1
+    },
+    {
+      "id": "p6_end",
+      "type": "end",
+      "label": "Done",
+      "x": 2440,
+      "y": 500,
+      "purposeInstructions": "Pipeline terminus. Dinner served, kitchen reset to baseline, reflection note saved.",
+      "inputs": 1
+    }
+  ],
+  "connections": [
+    { "from": "p0_start", "fromPort": 1, "to": "p0_concept", "toPort": 1 },
+    { "from": "p0_concept", "fromPort": 1, "to": "p1_guests", "toPort": 1 },
+    { "from": "p1_guests", "fromPort": 1, "to": "p1_invite", "toPort": 1 },
+    { "from": "p1_invite", "fromPort": 1, "to": "p1_rsvp_wait", "toPort": 1 },
+    { "from": "p1_rsvp_wait", "fromPort": 1, "to": "p2_fan", "toPort": 1 },
+    { "from": "p2_fan", "fromPort": 1, "to": "p2_menu", "toPort": 1 },
+    { "from": "p2_fan", "fromPort": 2, "to": "p2_ambience", "toPort": 1 },
+    { "from": "p2_fan", "fromPort": 3, "to": "p2_drinks", "toPort": 1 },
+    { "from": "p2_menu", "fromPort": 1, "to": "p3_shopping", "toPort": 1 },
+    { "from": "p2_ambience", "fromPort": 1, "to": "p3_shopping", "toPort": 2 },
+    { "from": "p2_drinks", "fromPort": 1, "to": "p3_shopping", "toPort": 3 },
+    { "from": "p3_shopping", "fromPort": 1, "to": "p3_shop", "toPort": 1 },
+    { "from": "p3_shop", "fromPort": 1, "to": "p4_cook", "toPort": 1 },
+    { "from": "p4_cook", "fromPort": 1, "to": "p4_taste_loop", "toPort": 1 },
+    { "from": "p4_taste_loop", "fromPort": 2, "to": "p5_service", "toPort": 1 },
+    { "from": "p5_service", "fromPort": 1, "to": "p6_cleanup", "toPort": 1 },
+    { "from": "p6_cleanup", "fromPort": 1, "to": "p6_end", "toPort": 1 }
+  ]
+}

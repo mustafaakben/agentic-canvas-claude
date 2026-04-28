@@ -6,3 +6,6 @@ Thumbs.db
 .env.*
 workflows/plans/*.json
 !workflows/plans/.gitkeep
+
+.convo/
+.temp/

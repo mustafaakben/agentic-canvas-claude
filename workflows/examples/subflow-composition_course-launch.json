@@ -1,0 +1,155 @@
+{
+  "name": "Course Launch — Subflow Composition Demo",
+  "meta": {
+    "author": "Mustafa Akben",
+    "topic": "Complete cycle for launching a graduate / executive course (placeholder: 'AI for Business Strategy' at the university — 12-week hybrid, target enrollment 25–30). Demonstrates the `subflow` primitive as a composition marker that signals 'this step IS its own workflow' without nesting it in this file.",
+    "phases": [
+      "P1 Scope (instructor-owned definition)",
+      "P2 Parallel build (prep + marketing as concurrent subflows)",
+      "P3 Launch gate (cross-functional go/no-go)",
+      "P4 Delivery & retrospective (sequential subflows)"
+    ],
+    "demonstrates": [
+      "`subflow` is a composition marker, NOT a nested executor. Per §3 the canvas does not actually nest subflow content — the marker just signals 'expand this elsewhere if you want to see inside.'",
+      "Use `subflow` over `generic` when the step IS its own workflow. The decision rule is encoded in `meta.subflowDecisionRule` so the choice is operational, not a vibes call.",
+      "Subflows behave normally in graph topology — they sit inside parallels, merges, branches, and sequential chains with no special wiring. This file shows two subflows in parallel (sf_prep + sf_marketing) and two more in sequence (sf_delivery → sf_retro).",
+      "Document each subflow's referent via `meta.subflowsReferenced` — the only place the marker→referent link lives, since the canvas itself doesn't carry it."
+    ],
+    "subflowDecisionRule": "Use `subflow` when the step you're about to add satisfies ALL THREE: (1) has internal structure substantial enough to warrant its own workflow JSON (≥ ~10 nodes if expanded), (2) is conceptually reusable across multiple parent workflows OR has natural ownership by a different role/team, (3) would meaningfully bloat the parent graph if inlined. Otherwise use `generic`. Single-agent steps are always `generic`. The `subflow` icon on the canvas signals 'expand this elsewhere if you want to see inside.'",
+    "subflowsReferenced": [
+      {
+        "node": "sf_prep",
+        "intent": "Curriculum design + course materials production + LMS setup + TA hiring & training + pre-launch dry-run.",
+        "wouldResolveTo": "(future) pipeline_course-prep.json — not yet built. The marker communicates 'this step is a workflow of its own; here is what it does, but it lives elsewhere.'",
+        "approximateNodeCount": 18,
+        "owner": "Course instructor + instructional designer",
+        "reusableAcrossCourses": true
+      },
+      {
+        "node": "sf_marketing",
+        "intent": "Audience targeting + channel strategy + content production + registration funnel + enrolled-learner pre-onboarding.",
+        "wouldResolveTo": "(future) pipeline_course-marketing.json — not yet built.",
+        "approximateNodeCount": 15,
+        "owner": "Marketing/comms partner (with instructor input on positioning)",
+        "reusableAcrossCourses": true
+      },
+      {
+        "node": "sf_delivery",
+        "intent": "12-week course execution: per-session loop, office hours, mid-cycle feedback, grading, end-of-course evaluations.",
+        "wouldResolveTo": "(future) pipeline_course-delivery.json — not yet built. Largest of the four; would itself contain a §4.3 loop primitive for the per-session iteration.",
+        "approximateNodeCount": 25,
+        "owner": "Instructor of record (TAs supporting)",
+        "reusableAcrossCourses": true
+      },
+      {
+        "node": "sf_retro",
+        "intent": "Quantitative + qualitative review, cross-functional retro meeting, decisions log, archive of materials.",
+        "wouldResolveTo": "(future) pipeline_course-retro.json — not yet built.",
+        "approximateNodeCount": 10,
+        "owner": "Instructor + program director (jointly)",
+        "reusableAcrossCourses": true
+      }
+    ],
+    "humanInTheLoop": ["p4_launch_gate"],
+    "compareWith": {
+      "multi-merge_landing-page.json": "That file uses 12 generics across three parallel arms — none are subflows because each arm-step is a single-agent step (e.g., 'self-critique against UX heuristics'). If ui_mockup ever scaled up to a 15-step internal workflow, it would graduate to a subflow node and gain a `subflowsReferenced` entry. Generics-vs-subflows is a granularity decision driven by `meta.subflowDecisionRule`.",
+      "trycatch-escalation_grant-application.json": "That file uses 5 generics for the proposal pipeline because each is a single-agent step (scope, draft, submit, etc.). p2_draft is the closest candidate to merit subflow promotion — proposal drafting is internally complex — but as a one-agent step in a single workflow run, generic is the right call. Promotion would happen if drafting genuinely warranted its own reusable workflow file."
+    },
+    "totalNodes": 10,
+    "totalConnections": 10
+  },
+  "nodes": [
+    {
+      "id": "start_launch",
+      "type": "start",
+      "label": "Start: Course Cycle",
+      "x": 120,
+      "y": 500,
+      "purposeInstructions": "Course Launch Lead. Initiate a complete cycle for a new course offering — from scope through delivery through retrospective. Demo placeholder: 'AI for Business Strategy' at the university, a 12-week graduate / executive education hybrid course, target enrollment 25–30 learners (mix of MBA students and working professionals).\n\nOutput a one-paragraph kickoff brief covering:\n- Course title, target audience, format (in-person / online / hybrid), and term (e.g., Fall 2026 second-half).\n- Calendar back-plan from the first session date: scope-lock date, prep-and-marketing-complete date, registration-close date, launch-gate date.\n- Cross-functional roster: instructor of record, instructional designer, marketing/comms partner, program director, TA(s).\n- Strategic intent: flagship offering / pilot / recurring / one-off — this drives polish levels and risk tolerance downstream.\n- The win condition for THIS launch ('enroll the cap and earn ≥ 4.5/5 instructor rating' is a different bar than 'pilot a new format and gather data').\n\nThis brief is the seed for p1_scope. Do not start curriculum design or marketing yet — top-level scope must lock first or downstream subflows rework expensively."
+    },
+    {
+      "id": "p1_scope",
+      "type": "generic",
+      "label": "Scope & Pedagogy",
+      "x": 300,
+      "y": 500,
+      "purposeInstructions": "Course-level scope and pedagogical philosophy. INSTRUCTOR-OWNED — do not delegate to the prep subflow, because prep operationalizes whatever scope says.\n\nDefine the course at the level the instructor controls:\n- Learning outcomes: 4–6 outcome statements at Bloom's apply / analyze / evaluate level. Each must be measurable.\n- Pedagogical model: lecture-heavy / case-based / studio / flipped / mixed. Pick ONE primary model; note exceptions.\n- Assessment philosophy: weight on participation, projects, exams, peer review. Will the course use authentic assessment (real client engagement, published artifact)?\n- Workload calibration: target hours/week for learners. Be honest — overstuffed courses get poor evaluations regardless of content quality.\n- Calendar shape: 12 weeks of equal-weight sessions vs. front-loaded vs. project-based crescendo.\n- Hard constraints: classroom availability, guest-speaker windows, exam-week limits.\n\nWhy this is a `generic` and not a `subflow`: this step is a single-agent decision (the instructor's), not a multi-step workflow with its own internal structure. Per `meta.subflowDecisionRule`, single-agent steps are always generic.\n\nOutput: scope document that becomes input for both sf_prep and sf_marketing (parallel fan-out next)."
+    },
+    {
+      "id": "p2_parallel",
+      "type": "parallel",
+      "label": "Fan-out: Build Tracks",
+      "x": 480,
+      "y": 500,
+      "purposeInstructions": "Parallel fan-out: prep and marketing run concurrently.\n\nWhy parallel rather than sequential: prep and marketing have overlapping lead times that make sequential execution wasteful and unrealistic.\n- Marketing CANNOT wait for prep to finish — registration must open ~6 weeks before launch, but final materials only lock ~1 week before launch.\n- Prep CANNOT wait for marketing's audience research to complete — most curriculum design is independent of specific enrollee characteristics.\n\nBoth arms consume the scope document from p1_scope. Each produces its own deliverables. BOTH must be complete before p4_launch_gate.\n\nThe two downstream nodes (sf_prep, sf_marketing) are subflow markers — see their instructions for what each represents. Their being subflows rather than chains of generics is intentional and is the central teaching of this demo file."
+    },
+    {
+      "id": "sf_prep",
+      "type": "subflow",
+      "label": "Subflow: Prep",
+      "x": 660,
+      "y": 380,
+      "purposeInstructions": "SUBFLOW MARKER: Course preparation pipeline.\n\nThis node represents an entire downstream workflow that is NOT nested in this file. The canvas treats it visually as a subflow icon; topologically it behaves like a generic (1 in, 1 out).\n\n=== PRIMITIVE SEMANTICS (canonical exposition for this file — sf_marketing, sf_delivery, sf_retro reference back to here) ===\n\nA `subflow` node carries no special wiring rules. It is a documentation primitive: it tells the reader and any future orchestrator that 'this step is composed of another whole workflow, not a single agent action.' The canvas does not actually nest subflow content (per §3 of the instruction file: 'currently no actual nesting; just signals composition'). The link from the marker to its referent workflow lives in `meta.subflowsReferenced`, not in the canvas.\n\nDecision rule for using subflow vs. generic (encoded in `meta.subflowDecisionRule`): use subflow when the step satisfies all three of (a) ≥ ~10 nodes if expanded, (b) reusable or owned by a different role/team, (c) would bloat the parent if inlined. Otherwise use generic.\n\n=== WHAT THIS SPECIFIC SUBFLOW IS ===\n\nA multi-week pipeline operationalizing the scope into deliverable course materials. Internal sequence approximately:\n- Curriculum design: weekly topic plan, reading list, assignment design.\n- Materials production: slide decks, case studies, problem sets, rubrics.\n- LMS setup: course shell in Canvas/Moodle/Blackboard, gradebook scaffolding, assignment portals, video hosting.\n- Guest speaker coordination: outreach, scheduling, AV setup.\n- TA selection and training: hire, onboard, calibrate grading.\n- Pre-launch dry run: end-to-end walkthrough of week 1 materials.\n\nWhy this passes the subflow decision rule:\n(a) ~18 nodes if fully expanded — well over the threshold.\n(b) Owned by instructor + instructional designer; reusable across courses with content swaps.\n(c) Inlining would balloon this file from 10 to ~28 nodes and erode the launch-cycle narrative.\n\nIf this orchestration ever runs for real, sf_prep would resolve to its own JSON file (e.g., `pipeline_course-prep.json`) — see the matching entry in `meta.subflowsReferenced`.\n\nOutput: prep deliverables complete and merged into the course shell. Hand to p3_merge_ready (input port 1)."
+    },
+    {
+      "id": "sf_marketing",
+      "type": "subflow",
+      "label": "Subflow: Marketing",
+      "x": 660,
+      "y": 620,
+      "purposeInstructions": "SUBFLOW MARKER: Course marketing & enrollment pipeline.\n\nThis node represents an entire downstream workflow that is NOT nested in this file. Subflow primitive semantics are documented canonically on sf_prep (see that node) — both nodes follow the same pattern.\n\n=== WHAT THIS SPECIFIC SUBFLOW IS ===\n\nA multi-week pipeline driving awareness, registration, and enrolled-learner readiness. Internal sequence approximately:\n- Audience targeting: ICP definition (industry, role, prior experience), refresh against last cohort's data.\n- Channel strategy: email list, LinkedIn, university comms, alumni network, paid ads (if budgeted), content marketing.\n- Content production: course landing page, social posts, faculty-spotlight assets, student testimonial reuse.\n- Registration funnel: landing page → registration form → confirmation email sequence → onboarding email sequence.\n- Analytics: funnel tracking, A/B testing of headlines/CTAs, weekly enrollment-pace check-ins.\n- Enrolled-learner pre-launch: welcome email, calendar holds, pre-reading delivery, slack/teams workspace setup.\n\nWhy this passes the subflow decision rule:\n(a) ~15 nodes if fully expanded.\n(b) Owned by marketing/comms partner (with instructor input on positioning); reusable across courses with audience swaps.\n(c) Inlining duplicates marketing structure across every course — exactly the kind of bloat subflow exists to prevent.\n\nDifferent domain from sf_prep, identical primitive logic. If real, would resolve to `pipeline_course-marketing.json` — see `meta.subflowsReferenced`.\n\nOutput: marketing deliverables complete and target enrollment achieved. Hand to p3_merge_ready (input port 2)."
+    },
+    {
+      "id": "p3_merge_ready",
+      "type": "merge",
+      "label": "Merge: Build Ready",
+      "x": 840,
+      "y": 500,
+      "purposeInstructions": "Merge: prep and marketing must both complete before the launch can proceed.\n\nDeliverables required at this merge:\n- From sf_prep: course shell populated, week 1 materials ready, TAs trained.\n- From sf_marketing: target enrollment hit (or executive call made to launch under-enrolled), enrolled learners pre-onboarded.\n\nMismatch handling: if sf_prep is ready but sf_marketing missed its enrollment target, that is a strategic question (delay? launch under-enrolled? cancel?) — surfaced explicitly at the next gate (p4_launch_gate), not papered over here. The merge's job is to wait for both, not to evaluate them.\n\nMerge mechanics: per §3, inputs auto-grow as connections target the merge. Port 1 receives from sf_prep (top arm); port 2 receives from sf_marketing (bottom arm). Merges wait for ALL inputs (both must arrive).\n\nOutput: a single 'launch-ready' state for p4_launch_gate to evaluate."
+    },
+    {
+      "id": "p4_launch_gate",
+      "type": "wait",
+      "label": "Wait: Launch Go/No-Go",
+      "x": 1080,
+      "y": 500,
+      "purposeInstructions": "Launch gate — go / no-go decision before the irreversible delivery phase begins.\n\nThe workflow stops here until a documented go/no-go decision is made. This is NOT a rubber-stamp gate; it is the structured cross-functional moment where the team confirms the launch should proceed.\n\nTwo human approvers required:\n1. Instructor of record — academic readiness: week 1 ready end-to-end, learning outcomes still match scope, course feels deliverable on the day-one date.\n2. Program director — business readiness: enrollment thresholds met (or under-enrollment override approved), financial viability confirmed, no institutional or calendar conflicts.\n\nDecision options:\n- GO: proceed to sf_delivery as planned.\n- DELAY: push the start date and re-enter the prep/marketing arms outside this workflow. Triggers a new start_launch invocation in a future term.\n- CANCEL: terminate the cycle. (A CANCEL outcome would route to a separate end node; not modeled here for demo simplicity, but a production workflow would add it.)\n\nNo silent passes. The decision and rationale must be captured in writing before sf_delivery begins.\n\nPer §4.6 + §10 user prefs ('wait at every approval/sign-off'). This is the highest-stakes gate in the cycle: post-this-gate the course is committed to running."
+    },
+    {
+      "id": "sf_delivery",
+      "type": "subflow",
+      "label": "Subflow: Delivery",
+      "x": 1260,
+      "y": 500,
+      "purposeInstructions": "SUBFLOW MARKER: Course delivery pipeline.\n\nSubflow primitive semantics are documented canonically on sf_prep (see that node). This is the largest of the four subflows referenced in this file.\n\n=== WHAT THIS SPECIFIC SUBFLOW IS ===\n\nA long-running pipeline executing the course week by week across the 12-week semester. Internal sequence approximately:\n- Per-session loop (×12): pre-session materials confirmation → session execution → post-session reflection → assignment release. This loop is itself a §4.3 primitive when expanded.\n- Office hours and support cadence: weekly office hours, slack/teams support, TA coverage.\n- Mid-cycle feedback survey at week 5–6: learner pulse, course-correction decisions.\n- Assessment grading: assignments, projects, exams as scheduled.\n- Final assessments: capstone project, final exam if applicable.\n- End-of-course evaluations: institutional course evaluations + custom course-specific survey.\n\nWhy this passes the subflow decision rule:\n(a) ~25 nodes if fully expanded — by far the largest expanded count among the four subflows.\n(b) Owned by the instructor (TAs supporting); the canonical 'reuse across courses' candidate — every course this instructor runs uses essentially the same delivery template with content swaps.\n(c) Inlining would dominate this file with weekly-cadence operations, drowning out the launch-cycle narrative.\n\nNote on sequential subflows: sf_delivery follows p4_launch_gate via a normal edge. There is no special wiring for transitions into/out of subflow nodes — they integrate with the rest of the graph identically to generics.\n\nOutput: course delivered, all assessments complete, evaluations collected. Hand to sf_retro."
+    },
+    {
+      "id": "sf_retro",
+      "type": "subflow",
+      "label": "Subflow: Retro",
+      "x": 1440,
+      "y": 500,
+      "purposeInstructions": "SUBFLOW MARKER: Retrospective and next-iteration decisions.\n\nSubflow primitive semantics are documented canonically on sf_prep (see that node). This is the smallest of the four subflows referenced here, but it qualifies — see the decision-rule check below.\n\n=== WHAT THIS SPECIFIC SUBFLOW IS ===\n\nA short-but-essential pipeline closing the cycle and seeding the next one. Internal sequence approximately:\n- Quantitative review: enrollment vs. target, retention through the course, grade distributions, evaluation scores, marketing-funnel conversion.\n- Qualitative review: instructor reflections per week, TA debrief, exemplary and weak learner work patterns.\n- Cross-functional retro meeting: instructor + instructional designer + marketing partner + program director.\n- Decisions log: what to keep / change / kill for the next iteration. Specific, with named owners and deadlines.\n- Archive: clean up LMS, archive materials with version notes, update reusable templates.\n\nWhy this passes the subflow decision rule (close call — worth showing):\n(a) ~10 nodes if fully expanded — right at the threshold, but it's a real pipeline with sub-steps.\n(b) Jointly owned by instructor + program director; reusable across courses.\n(c) Inlining adds operational detail that distracts from the high-level cycle view.\n\nNote on subflow chaining: sf_retro follows sf_delivery as a normal sequential edge — subflows behave like generics in graph topology. There is no special wiring for subflow-to-subflow transitions.\n\nOutput: cycle complete, next-iteration decisions captured. Hand to end_cycle_complete."
+    },
+    {
+      "id": "end_cycle_complete",
+      "type": "end",
+      "label": "End: Cycle Complete",
+      "x": 1620,
+      "y": 500,
+      "purposeInstructions": "Cycle complete.\n\nThis end represents 'one full launch-through-retrospective cycle finished' — successfully or otherwise. The decision to run another cycle (with revisions, with a different audience, in a different term) is OUT of this workflow.\n\nA next cycle instantiates a NEW start_launch invocation with the prior cycle's retro-decisions as inputs. This mirrors the no-back-edge convention seen in trycatch-escalation_grant-application.json (resubmission is a new workflow run) and branch-decision_paper-submission.json (a journal rejection drives a fresh submission to a different venue, not a back-edge). Across the demo set, 'next cycle = new workflow invocation, never a back-edge' is a recurring pattern — single-cycle workflows stay clean and observable."
+    }
+  ],
+  "connections": [
+    { "from": "start_launch",    "fromPort": 1, "to": "p1_scope",          "toPort": 1 },
+    { "from": "p1_scope",        "fromPort": 1, "to": "p2_parallel",       "toPort": 1 },
+    { "from": "p2_parallel",     "fromPort": 1, "to": "sf_prep",           "toPort": 1 },
+    { "from": "p2_parallel",     "fromPort": 2, "to": "sf_marketing",      "toPort": 1 },
+    { "from": "sf_prep",         "fromPort": 1, "to": "p3_merge_ready",    "toPort": 1 },
+    { "from": "sf_marketing",    "fromPort": 1, "to": "p3_merge_ready",    "toPort": 2 },
+    { "from": "p3_merge_ready",  "fromPort": 1, "to": "p4_launch_gate",    "toPort": 1 },
+    { "from": "p4_launch_gate",  "fromPort": 1, "to": "sf_delivery",       "toPort": 1 },
+    { "from": "sf_delivery",     "fromPort": 1, "to": "sf_retro",          "toPort": 1 },
+    { "from": "sf_retro",        "fromPort": 1, "to": "end_cycle_complete","toPort": 1 }
+  ]
+}
